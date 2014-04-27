@@ -143,6 +143,20 @@ this.makeHtml = function(text) {
 // and <img> tags get encoded.
 //
 
+    // txt2tags to markdown
+    
+    text = text.replace(/(-|_){20,}/g, '<hr/>')
+    text = text.replace(/(=){20,}/g, '<hr noshade="noshade" size="5"/>')
+    text = text.replace(/\s*=====\s*(.+)\s*=====/gm,"\n##### $1\n");
+    text = text.replace(/\s*====\s*(.+)\s*====/gm,"\n#### $1\n");
+    text = text.replace(/\s*===\s*(.+)\s*===/gm,"\n### $1\n");
+    text = text.replace(/\s*==\s*(.+)\s*==/gm,"\n## $1\n");
+    text = text.replace(/^\s*=\s*(.+)\s*=/gm,"\n<h1>$1</h1>\n");
+   	text = text.replace(/__([^*]+)__/g, '<u>$1</u>');
+   	text = text.replace(/--([^*]+)--/g, '<del>$1</del>');
+    text = text.replace(/\/\/([^*]+)\/\//g, '<i>$1</i>');
+    text = text.replace(/^%(.+)$/gm, '');
+
 	// Clear the global hashes. If we don't clear these, you get conflicts
 	// from other articles when generating a page which contains more than
 	// one article (e.g. an index page that shows the N most recent
@@ -774,11 +788,14 @@ var _DoHeaders = function(text) {
 	//	Header 2
 	//	--------
 	//
-	text = text.replace(/^(.+)[ \t]*\n=+[ \t]*\n+/gm,
-		function(wholeMatch,m1){return hashBlock('<h1 id="' + headerId(m1) + '">' + _RunSpanGamut(m1) + "</h1>");});
+    
+    // we disable this for txt2tags
+    
+	//text = text.replace(/^(.+)[ \t]*\n=+[ \t]*\n+/gm,
+	//	function(wholeMatch,m1){return hashBlock('<h1 id="' + headerId(m1) + '">' + _RunSpanGamut(m1) + "</h1>");});
 
-	text = text.replace(/^(.+)[ \t]*\n-+[ \t]*\n+/gm,
-		function(matchFound,m1){return hashBlock('<h2 id="' + headerId(m1) + '">' + _RunSpanGamut(m1) + "</h2>");});
+	//text = text.replace(/^(.+)[ \t]*\n-+[ \t]*\n+/gm,
+	//	function(matchFound,m1){return hashBlock('<h2 id="' + headerId(m1) + '">' + _RunSpanGamut(m1) + "</h2>");});
 
 	// atx-style headers:
 	//  # Header 1
