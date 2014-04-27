@@ -1,5 +1,7 @@
 //
-// showdown.js -- A javascript port of Markdown.
+// txt2tags.js -- A javascript port of txt2tags syntax
+//
+// (based on showdown, a Markdown parser in js)
 //
 // Copyright (c) 2007 John Fraser.
 //
@@ -9,15 +11,8 @@
 // Redistributable under a BSD-style open source license.
 // See license.txt for more information.
 //
-// The full source distribution is at:
+// The full source distribution was at attacklab.net (not available anymore)
 //
-//				A A L
-//				T C A
-//				T K B
-//
-//   <http://www.attacklab.net/>
-//
-
 //
 // Wherever possible, Showdown is a straight, line-by-line port
 // of the Perl version of Markdown.
@@ -152,10 +147,16 @@ this.makeHtml = function(text) {
     text = text.replace(/\s*===\s*(.+)\s*===/gm,"\n### $1\n");
     text = text.replace(/\s*==\s*(.+)\s*==/gm,"\n## $1\n");
     text = text.replace(/^\s*=\s*(.+)\s*=/gm,"\n<h1>$1</h1>\n");
+    text = text.replace(/\[(.+) http:\/\/(.+)\]/gm, '[$1](http:&#47;&#47;$2)');
    	text = text.replace(/__([^*]+)__/g, '<u>$1</u>');
    	text = text.replace(/--([^*]+)--/g, '<del>$1</del>');
     text = text.replace(/\/\/([^*]+)\/\//g, '<i>$1</i>');
     text = text.replace(/^%(.+)$/gm, '');
+    text = text.replace(/\t\t(.+)$/gm, '<blockquote><blockquote>$1</blockquote></blockquote>\n');
+    text = text.replace(/\t(.+)$/gm, '<blockquote>$1</blockquote>\n');
+    text = text.replace(/\s``` (.+)$/gm, '<pre>$1</pre>');
+    text = text.replace(/^\+\s*(.+)$/gm, '1. $1');
+
 
 	// Clear the global hashes. If we don't clear these, you get conflicts
 	// from other articles when generating a page which contains more than
