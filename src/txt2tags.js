@@ -156,6 +156,7 @@ this.makeHtml = function(text) {
     text = text.replace(/\t(.+)$/gm, '<blockquote>$1</blockquote>\n');
     text = text.replace(/\s``` (.+)$/gm, '<pre>$1</pre>');
     text = text.replace(/^\+\s*(.+)$/gm, '1. $1');
+    //text = text.replace(/^\s*\|(.+)\|(.+)\|$/gm, '<table><tr><td>$1</td><td>$2</td><tr></</table>');
 
 
 	// Clear the global hashes. If we don't clear these, you get conflicts
@@ -1456,6 +1457,7 @@ var escapeCharacters_callback = function(wholeMatch,m1) {
 	return "~E"+charCodeToEscape+"E";
 }
 
+  
 } // end of Showdown.converter
 
 
@@ -1470,3 +1472,7 @@ if (typeof define === 'function' && define.amd) {
         return Showdown;
     });
 }
+
+
+
+
