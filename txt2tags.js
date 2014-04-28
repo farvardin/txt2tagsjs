@@ -139,7 +139,6 @@ this.makeHtml = function(text) {
 //
 
     // txt2tags to markdown or html
-    
     text = text.replace(/(-|_){20,}/g, '<hr/>')
     text = text.replace(/(=){20,}/g, '<hr noshade="noshade" size="5"/>')
     text = text.replace(/\s*=====\s*(.+)\s*=====/gm,"\n##### $1\n");
@@ -155,15 +154,17 @@ this.makeHtml = function(text) {
     text = text.replace(/^\s*\[(.+).gif\]/gm, '<img src="$1.gif"></img>');
     text = text.replace(/http:<i>/gm, 'http://');
     text = text.replace(/http:<\/i>/gm, 'http://');
-    text = text.replace(/^\s*\[(.+) http:(.+)\]/gm, '<a href="http:$2">$1</a>');
+    //text = text.replace(/^\s*\[(.+) http:(.+)\]/gm, '<a href="http:$2">$1</a>');
     //text = text.replace(/\[(.+)\s(.+?)\s(.+)\]/g, '<a href="$3">$1 $2</a>');
     //text = text.replace(/\[(.+?)\s(.+)\]/g, '<a href="$2">$1</a>');
-    text = text.replace(/\[(.+[^\]]) ([^ ].*?)\]/g, '<a href="$2">$1</a>');
+    text = text.replace(/\[(.+[^\]]) ([^ ]?.*?)\]/g, '<a href="$2">$1</a>');
     text = text.replace(/^%(.+)$/gm, '');
     text = text.replace(/\t\t(.+)$/gm, '<blockquote><blockquote>$1</blockquote></blockquote>\n');
     text = text.replace(/\t(.+)$/gm, '<blockquote>$1</blockquote>\n');
     text = text.replace(/\s``` (.+)$/gm, '<pre>$1</pre>');
     text = text.replace(/^\+\s*(.+)$/gm, '1. $1');
+    text = text.replace(/^:\s(.+)$/gm, '<dl><dt>$1</dt><dd>');
+    text = text.replace(/<dl>/gm, '</dd><dl>');
     //text = text.replace(/^\s*\|(.+)\|(.+)\|$/gm, '<table><tr><td>$1</td><td>$2</td><tr></</table>');
 
 
@@ -1242,7 +1243,10 @@ var _FormParagraphs = function(text) {
 		else if (str.search(/\S/) >= 0) {
 			str = _RunSpanGamut(str);
 			str = str.replace(/^([ \t]*)/g,"<p>");
-			str += "</p>"
+			str = str.replace(/^<p><dl>/g,"<dl>");
+			str = str.replace(/^<p><\/dd>/g,"<dl>");
+			str += "</p>";
+            str = str.replace(/<\/p>/g, '</dd></p>');
 			grafsOut.push(str);
 		}
 
