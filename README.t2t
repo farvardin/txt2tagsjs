@@ -85,8 +85,10 @@ This doesn't work at all (yet):
 - Tables
 - definition lists
 
-This could be improved:
+This could be improved (soon):
 
+- images
+- links
 - some ordered **sublists** will be turned to unordered lists when you mix both types
 
 

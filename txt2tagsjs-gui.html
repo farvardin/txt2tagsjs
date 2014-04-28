@@ -165,10 +165,6 @@
 			margin-right: 4px;
    		}
 
-		#previewPane > blockquote {
-			margin-left: 3em;
-   		}
-
 		#previewPane > :first-child {
 			margin-top: 4px; /* pane padding */
 		}
@@ -177,10 +173,28 @@
 			line-height: 1.4em;
 		}
 
-		#previewPane code {
+		#previewPane pre code {
+            margin-left: 0em;
+			font-size: 1.0em;
+		}
+        
+        #previewPane code {
+            background-color: #dedede;
 			font-size: 1.3em;
 		}
-		
+
+		#previewPane blockquote {
+			margin-left: 3em;
+            font-size: 1.3em;
+   		}
+        
+        #previewPane pre {
+            background-color: #dedede;
+			margin-left: 3em;
+            font-size: 1.4em;
+   		}		
+       
+        
 		#footer {
 			margin: 0;
 			padding: 0;
@@ -470,37 +484,6 @@ That's all for now.
 
 
 
-
-            
-Using this tool
----------------
-
-This page lets you create HTML by entering text in a simple format that's easy to read and write.
-
-  - Type Markdown text in the left window
-  - See the HTML in the right
-
-Markdown is a lightweight markup language based on the formatting conventions that people naturally use in email.  As [John Gruber] writes on the [Markdown site] [1]:
-
-&gt; The overriding design goal for Markdown's
-&gt; formatting syntax is to make it as readable 
-&gt; as possible. The idea is that a
-&gt; Markdown-formatted document should be
-&gt; publishable as-is, as plain text, without
-&gt; looking like it's been marked up with tags
-&gt; or formatting instructions.
-
-This document is written in Markdown; you can see the plain-text version on the left.  To get a feel for Markdown's syntax, type some text into the left window and watch the results in the right.  You can see a Markdown syntax guide by switching the right-hand window from *Preview* to *Syntax Guide*.
-
-Showdown is a Javascript port of Markdown.  You can get the full [source code] by clicking on the version number at the bottom of the page.
-
-**Start with a [blank page] or edit this document in the left window.**
-
-  [john gruber]: http://daringfireball.net/
-  [1]: http://daringfireball.net/projects/markdown/
-  [source code]: http://www.attacklab.net/showdown-v0.9.zip
-  [blank page]: ?blank=1 "Clear all text"
-
 </textarea> 
 	</div>
 
@@ -526,360 +509,213 @@ Showdown is a Javascript port of Markdown.  You can get the full [source code] b
 
 <textarea id="syntaxPane" class="pane" cols="80" rows="20" readonly="readonly">
 
-Markdown Syntax Guide
-=====================
+=  Introduction  =
 
-This is an overview of Markdown's syntax.  For more information, visit the [Markdown web site].
+Welcome to the txt2tags sample file.
 
- [Markdown web site]:
-   http://daringfireball.net/projects/markdown/
+Here you have examples and a brief explanation of all
+marks.
 
+The first 3 lines of this file are used as headers,
+on the following format:
+```
+line1: document title
+line2: author name, email
+line3: date, version
+```
 
+Lines with balanced equal signs = around are titles.
 
+% a secret comment!
+%TODO link to program site http://txt2tags.org
 
 
+              =  Fonts and Beautifiers  =
 
-Italics and Bold
-================
+We have two sets of fonts:
 
+The NORMAL type that can be improved with beautifiers.
 
-*This is italicized*, and so is _this_.
+The TYPEWRITER type that uses monospaced font for
+pre-formatted text.
 
-**This is bold**, and so is __this__.
+We will now enter on a subtitle...
 
-You can use ***italics and bold together*** if you ___have to___.
 
+                  ==  Beautifiers  ==
 
+The text marks for beautifiers are simple, just as you
+type on a plain text email message.
 
+We use double *, /, - and _ to represent **bold**,
+//italic//, --strike-- and __underline__.
 
+The **//bold italic//** style is also supported as a
+combination.
 
 
-Links
-=====
+              ==  Pre-Formatted Text  ==
 
+We can put a code sample or other pre-formatted text:
+```
+  here    is     pre-formatted
+//marks// are  **not**  ``interpreted``
+```
 
-Simple links
-------------
+And also, it's easy to put a one line pre-formatted
+text:
+``` prompt$ ls /etc
 
-There are three ways to write links.  Each is easier to read than the last:
+Or use ``pre-formatted`` inside sentences.
 
-Here's an inline link to [Google](http://www.google.com/).
-Here's a reference-style link to [Google] [1].
-Here's a very readable link to [Yahoo!].
 
-  [1]: http://www.google.com/
-  [yahoo!]: http://www.yahoo.com/
+                ==  More Cosmetics  ==
 
-The link definitions can appear anywhere in the document -- before or after the place where you use them.  The link definition names (`1` and `Yahoo!`) can be any unique string, and are case-insensitive; `[Yahoo!]` is the same as `[YAHOO!]`.
+Special entities like email (duh@somewhere.com) and
+URL (http://www.duh.com) are detected automagically,
+as long as the horizontal line:
 
+--------------------------------------------------------
+^ thin or large v
+========================================================
 
-Advanced links: Title attributes
---------------------------------
+You can also specify an [explicit link http://duh.org]
+or an [explicit email duh@somewhere.com] with label.
 
-You can also add a `title` attribute to a link, which will show up when the user holds the mouse pointer it.  Title attributes are helpful if your link text is not descriptive enough to tell users where they're going.  (In reference links, you can use optionally parentheses for the link title instead of quotation marks.)
+And remember,
+	A TAB in front of the line does a quotation.
+		More TABs, more depth (if allowed).
+Nice.
 
-Here's a [poorly-named link](http://www.google.com/ "Google").
-Never write "[click here][^2]".
-Trust [me].
 
-  [^2]: http://www.w3.org/QA/Tips/noClickHere
-        (Advice against the phrase "click here")
-  [me]: http://www.attacklab.net/ "Attacklab"
+                      =  Lists  =
 
+A list of items is natural, just putting a **dash** or
+a **plus** at the beginning of the line.
 
-Advanced links: Bare URLs
--------------------------
 
-You can write bare URLs by enclosing them in angle brackets:
+                  ==  Plain List  ==
 
-My web site is at &lt;http://www.attacklab.net&gt;.
+The dash is the default list identifier. For sublists,
+just add **spaces** at the beginning of the line. More
+spaces, more sublists.
 
-If you use this format for email addresses, Showdown will encode the address to make it harder for spammers to harvest.  Try it and look in the *HTML Output* pane to see the results:
+- Earth
+  - America
+    - South America
+      - Brazil
+        - How deep can I go?
+  - Europe
+    - Lots of countries
+- Mars
+  - Who knows?
 
-Humans can read this, but most spam harvesting robots can't: &lt;me@privacy.net&gt;
 
+The list ends with **two** consecutive blank lines.
 
 
+                 ==  Numbered List  ==
 
+The same rules as the plain list, just a different
+identifier (plus).
 
++ one
++ two
++ three
+  - mixed lists!
+  - what a mess
+    + counting again
+    + ...
++ four
 
-Headers
-=======
 
+                ==  Definition List  ==
 
-There are two ways to do headers in Markdown.  (In these examples, Header 1 is the biggest, and Header 6 is the smallest.)
+The definition list identifier is a colon, followed by
+the term. The term contents is placed on the next line.
 
-You can underline text to make the two top-level headers:
+: orange
+  a yellow fruit
+: apple
+  a green or red fruit
+: other fruits
+  - wee!
+  - mixing lists
+    + again!
+    + and again!
 
-Header 1
-========
 
-Header 2
---------
+                     =  Tables  =
 
-The number of `=` or `-` signs doesn't matter; you can get away with just one.  But using enough to underline the text makes your titles look better in plain text.
+Use pipes to compose table rows and cells.
+Double pipe at the line beginning starts a heading row.
+Natural spaces specify each cell alignment.
 
-You can also use hash marks for all six levels of HTML headers:
+  | cell 1.1  |  cell 1.2   |   cell 1.3 |
+  | cell 2.1  |  cell 2.2   |   cell 2.3 |
+  | cell 3.1  |  cell 3.2   |   cell 3.3 |
 
-# Header 1 #
-## Header 2 ##
-### Header 3 ###
-#### Header 4 ####
-##### Header 5 #####
-###### Header 6 ######
+|| heading 1 |  heading 2  |  heading 3 |
+ | cell 1.1  |  cell 1.2   |   cell 1.3 |
+ | cell 2.1  |  cell 2.2   |   cell 2.3 |
 
-The closing `#` characters are optional.
+ |_ heading 1 |  cell 1.1   |   cell 1.2 |
+  | heading 2 |  cell 2.1   |   cell 2.2 |
+  | heading 3 |  cell 3.1   |   cell 3.2 |
 
+|/ heading   |  heading 1  |  heading 2 |
+ | heading 1 |  cell 1.1   |   cell 1.2 |
+ | heading 2 |  cell 2.1   |   cell 2.2 |
 
+Without the last pipe, no border:
 
+  | cell 1.1  |  cell 1.2   |   cell 1.3
+  | cell 2.1  |  cell 2.2   |   cell 2.3
+  | cell 3.1  |  cell 3.2   |   cell 3.3
 
+|| heading 1 |  heading 2  |  heading 3
+ | cell 1.1  |  cell 1.2   |   cell 1.3
+ | cell 2.1  |  cell 2.2   |   cell 2.3
 
+ |_ heading 1 |  cell 1.1   |   cell 1.2
+  | heading 2 |  cell 2.1   |   cell 2.2
+  | heading 3 |  cell 3.1   |   cell 3.2
 
-Horizontal Rules
-================
+|/ heading   |  heading 1  |  heading 2
+ | heading 1 |  cell 1.1   |   cell 1.2
+ | heading 2 |  cell 2.1   |   cell 2.2
 
+                =  Special Entities  =
 
-You can insert a horizontal rule by putting three or more hyphens, asterisks, or underscores on a line by themselves:
+Because things were too simple.
 
----
 
-*******
-___
+                    ==  Images  ==
 
-You can also use spaces between the characters:
+The image mark is as simple as it can be: ``[filename]``.
 
--  -  -  -
+                      [img/photo.jpg]  
 
-All of these examples produce the same output.
+And with some targets the image is linkable :
 
+                      [[img/photo.jpg] http://www.txt2tags.org]  
 
+- The filename must end in PNG, JPG, GIF, or similar.
+- No spaces inside the brackets!
 
 
+                     ==  Other  ==
+When the target needs, special chars like <, > and &
+are escaped.
 
+The handy ``%%date`` macro expands to the current date.
 
-Lists
-=====
+So today is %%date on the ISO ``YYYYMMDD`` format.
 
+You can also specify the date format with the %? flags,
+as ``%%date(%m-%d-%Y)`` which gives: %%date(%m-%d-%Y).
 
-Simple lists
-------------
-
-A bulleted list:
-
-- You can use a minus sign for a bullet
-+ Or plus sign
-* Or an asterisk
-
-A numbered list:
-
-1. Numbered lists are easy
-2. Markdown keeps track of the numbers for you
-7. So this will be item 3.
-
-A double-spaced list:
-
-- This list gets wrapped in `&lt;p&gt;` tags
-
-- So there will be extra space between items
-
-
-Advanced lists: Nesting
------------------------
-
-You can put other Markdown blocks in a list; just indent four spaces for each nesting level.  So:
-
-1. Lists in a list item:
-    - Indented four spaces.
-        * indented eight spaces.
-    - Four spaces again.
-
-2.  Multiple paragraphs in a list items:
-
-    It's best to indent the paragraphs four spaces
-    You can get away with three, but it can get
-    confusing when you nest other things.
-    Stick to four.
-
-    We indented the first line an extra space to align
-    it with these paragraphs.  In real use, we might do
-    that to the entire list so that all items line up.
-
-    This paragraph is still part of the list item, but it looks messy to humans.  So it's a good idea to wrap your nested paragraphs manually, as we did with the first two.
-
-3. Blockquotes in a list item:
-
-    &gt; Skip a line and
-    &gt; indent the &gt;'s four spaces.
-
-4. Preformatted text in a list item:
-
-        Skip a line and indent eight spaces.
-        That's four spaces for the list
-        and four to trigger the code block.
-
-
-
-
-
-
-Blockquotes
-===========
-
-
-Simple blockquotes
-------------------
-
-Blockquotes are indented:
-
-&gt; The syntax is based on the way email programs
-&gt; usually do quotations. You don't need to hard-wrap
-&gt; the paragraphs in your blockquotes, but it looks much nicer if you do.  Depends how lazy you feel.
-
-
-Advanced blockquotes: Nesting
------------------------------
-
-You can put other Markdown blocks in a blockquote; just add a `&gt;` followed by a space:
-
-Parragraph breaks in a blockquote:
-
-&gt; The &gt; on the blank lines is optional.
-&gt; Include it or don't; Markdown doesn't care.
-&gt;
-&gt; But your plain text looks better to
-&gt; humans if you include the extra `&gt;`
-&gt; between paragraphs.
-
-
-Blockquotes within a blockquote:
-
-&gt; A standard blockquote is indented
-&gt; &gt; A nested blockquote is indented more
-&gt; &gt; &gt; &gt; You can nest to any depth.
-
-
-Lists in a blockquote:
-
-&gt; - A list in a blockquote
-&gt; - With a &gt; and space in front of it
-&gt;     * A sublist
-
-Preformatted text in a blockquote:
-
-&gt;     Indent five spaces total.  The first
-&gt;     one is part of the blockquote designator.
-
-
-
-
-
-
-Images
-======
-
-
-Images are exactly like links, but they have an exclamation point in front of them:
-
- ![Valid XHTML] (http://w3.org/Icons/valid-xhtml10).
-
-The word in square brackets is the alt text, which gets displayed if the browser can't show the image.  Be sure to include meaningful alt text for blind users' screen-reader software.
-
-Just like links, images work with reference syntax and titles:
-
- This page is ![valid XHTML][checkmark].
-
- [checkmark]: http://w3.org/Icons/valid-xhtml10
-           "What are you smiling at?"
-
-
-**Note:**
-
-Markdown does not currently support the shortest reference syntax for images:
-
-  Here's a broken ![checkmark].
-
-But you can use a slightly more verbose version of implicit reference names:
-
-  This ![checkmark][] works.
-
-The reference name (`valid icon`) is also used as the alt text.
-
-
-
-
-
-
-Inline HTML
-===========
-
-
-If you need to do something that Markdown can't handle, you can always just use HTML:
-
- Strikethrough humor is &lt;strike&gt;funny&lt;/strike&gt;.
-
-Markdown is smart enough not to mangle your span-level HTML:
-
-&lt;u&gt;Markdown works *fine* in here.&lt;/u&gt;
-
-Block-level HTML elments have a few restrictions:
-
-1. They must be separated from surrounding text by blank
-   lines.
-2. The begin and end tags of the outermost block element
-   must not be indented.
-3. You can't use Markdown within HTML blocks.
-
-So:
-
-&lt;div style="background-color: lightgray"&gt;
-    You can &lt;em&gt;not&lt;/em&gt; use Markdown in here.
-&lt;/div&gt;
-
-
-
-
-
-
-Preformatted Text
-=================
-
-
-You can include preformatted text in a Markdown document.
-
-To make a code block, indent four spaces:
-
-    printf("goodbye world!");  /* his suicide note
-                                  was in C */
-
-The text will be wrapped in `&lt;pre&gt;` and `&lt;code&gt;` tags, and the browser will display it in a monospaced typeface.  The first four spaces will be stripped off, but all other whitespace will be preserved.
-
-You cannot use Markdown or HTML within a code block, which makes them a convenient way to show samples of Markdown or HTML syntax:
-
-    &lt;blink&gt;
-       You would hate this if it weren't
-       wrapped in a code block.
-    &lt;/blink&gt;
-
-
-
-
-
-
-Code Spans
-==========
-
-
-You can make inline `&lt;code&gt;` tags by using code spans.  Use backticks to make a code span:
-
- Press the `&lt;Tab&gt;` key, then type a `$`.
-
-(The backtick key is in the upper left corner of most keyboards.)
-
-Like code blocks, code spans will be displayed in a monospaced typeface.  Markdown and HTML will not work within them:
-
- Markdown italicizes things like this: `I *love* it.`
-
- Don't use the `&lt;font&gt;` tag; use CSS instead.
+That's all for now.
 
 </textarea>
 
@@ -891,33 +727,7 @@ Like code blocks, code spans will be displayed in a monospaced typeface.  Markdo
 	
 	<div id="footer">
 		<span id="byline">
-			<b></b> copyright &copy; 2007
-	
-			<script type="text/javascript">
-			/* <![CDATA[ */
-			function hivelogic_enkoder(){var kode=
-			"kode=\"oked\\\"=rnhg%@uqkj(Cxtnm+Ftxmn+e{F\\\\p00o1yq0\\\\00_z33:3~u\\\\q0"+
-			"0.0m4tHq,I~.rmhxy{u0\\\\001\\\\77{Fpt3_333_33L{\\\\z00m0\\\\m00w0mo:xqnhz0"+
-			"\\\\00.,\\\\u00x00\\\\00qIh.Qymux,\\\\t00,0\\\\q00M1\\\\t00~0.{.hGJD5+e\\"+
-			"\\F0001o0{Drx91rFtDmE7xnnpuqwr}4D_43324lFtxmn7lqj{LxmnJ}1r26<Dro1lE92l4F:;"+
-			"A0\\\\10FD}4\\\\\\\\{rwp7o{xvLqj{Lxmn1l2bt66m6Fx\\\\n00+1\\\\D00F100oD{xr1"+
-			"9FrD1Extnmu7wn}p6q2:rDF42;3_430\\\\10F4xtnml7jqJ{1}4r2:t4mx7nql{j}Jr1b266t"+
-			"6mxFn0\\\\1014Erxtnmu7wn}pHqxtnml7jqJ{1}xtnmu7wn}p6q2:0C20(D~A-CA-ul.xCoA6"+
-			"Bouqkjr4tkzmAn1o/10\\\\10Ciuqkji4gnIxjuGk.z/o93oA.lBi/61i7C>8~AC1zYoxmtl4u"+
-			"xIsgnIxju.k/i3_33uqkj~C>%@{**i>url+3@l>n?gr1hhojqkwl>..~,@frnhgf1dkFugrDh+"+
-			"w,l60l>+i?f,3.f4@;5{>@.wVlujqi1ruFpdkFugr+h,f0\\\\00rnhg{@;\\\"=x''f;roi(0"+
-			"=i;k<do.eelgnhti;++{)=cokedc.ahCrdoAe(t)i3-i;(f<c)0+c1=82x;=+tSirgnf.orCma"+
-			"hCrdo(e)ck}do=ex\";x='';for(i=0;i<(kode.length-1);i+=2){x+=kode.charAt(i+1"+
-			")+kode.charAt(i)}kode=x+(i<kode.length?kode.charAt(kode.length-1):'');"
-			;var i,c,x;while(eval(kode));}hivelogic_enkoder();
-			/* ]]> */
-			</script>
-			John Fraser
-			<script type="text/javascript">
-			/* <![CDATA[ */
-			document.write("</a>");
-			/* ]]> */
-			</script>
+			<b></b> 
 		</span>
 	
 		<span id="convertTextControls">

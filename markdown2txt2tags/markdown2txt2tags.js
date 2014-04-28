@@ -1,4 +1,7 @@
 //
+// markdown2txt2tags.js -- a converter from markdown to txt2tags
+//
+// based on:
 // showdown.js -- A javascript port of Markdown.
 //
 // Copyright (c) 2007 John Fraser.
@@ -9,15 +12,6 @@
 // Redistributable under a BSD-style open source license.
 // See license.txt for more information.
 //
-// The full source distribution is at:
-//
-//				A A L
-//				T C A
-//				T K B
-//
-//   <http://www.attacklab.net/>
-//
-
 //
 // Wherever possible, Showdown is a straight, line-by-line port
 // of the Perl version of Markdown.
