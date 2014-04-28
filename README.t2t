@@ -84,6 +84,8 @@ This doesn't work at all (yet):
 
 - Tables
 - definition lists
+- macros
+- preprocessor (preproc / postproc
 
 This could be improved (soon):
 
