@@ -138,23 +138,27 @@ this.makeHtml = function(text) {
 // and <img> tags get encoded.
 //
 
-    // txt2tags to markdown
+    // txt2tags to markdown or html
     
     text = text.replace(/(-|_){20,}/g, '<hr/>')
     text = text.replace(/(=){20,}/g, '<hr noshade="noshade" size="5"/>')
     text = text.replace(/\s*=====\s*(.+)\s*=====/gm,"\n##### $1\n");
     text = text.replace(/\s*====\s*(.+)\s*====/gm,"\n#### $1\n");
     text = text.replace(/\s*===\s*(.+)\s*===/gm,"\n### $1\n");
-    text = text.replace(/\s*==\s*(.+)\s*==/gm,"\n## $1\n");
+    text = text.replace(/\s*==\s*(.+)\s*==/gm,"\n<h2>$1</h2>\n");
     text = text.replace(/^\s*=\s*(.+)\s*=/gm,"\n<h1>$1</h1>\n");
    	text = text.replace(/__([^*]+)__/g, '<u>$1</u>');
    	text = text.replace(/--([^*]+)--/g, '<del>$1</del>');
-    text = text.replace(/\/\/([^*]+)\/\//g, '<i>$1</i>');
-        text = text.replace(/^\s*\[(.+).jpg\]/gm, '<img src="$1.jpg"></img>');
+    //text = text.replace(/\/\/([^*]+)\/\//g, '<i>$1</i>');
+    text = text.replace(/^\s*\[(.+).jpg\]/gm, '<img src="$1.jpg"></img>');
     text = text.replace(/^\s*\[(.+).png\]/gm, '<img src="$1.png"></img>');
     text = text.replace(/^\s*\[(.+).gif\]/gm, '<img src="$1.gif"></img>');
-    text = text.replace(/^\s*\[(.+) http:\/\/(.+)\]/gm, '[$1](http:&#47;&#47;$2)');
     text = text.replace(/http:<i>/gm, 'http://');
+    text = text.replace(/http:<\/i>/gm, 'http://');
+    text = text.replace(/^\s*\[(.+) http:(.+)\]/gm, '<a href="http:$2">$1</a>');
+    //text = text.replace(/\[(.+)\s(.+?)\s(.+)\]/g, '<a href="$3">$1 $2</a>');
+    //text = text.replace(/\[(.+?)\s(.+)\]/g, '<a href="$2">$1</a>');
+    text = text.replace(/\[(.+[^\]]) ([^ ].*?)\]/g, '<a href="$2">$1</a>');
     text = text.replace(/^%(.+)$/gm, '');
     text = text.replace(/\t\t(.+)$/gm, '<blockquote><blockquote>$1</blockquote></blockquote>\n');
     text = text.replace(/\t(.+)$/gm, '<blockquote>$1</blockquote>\n');
