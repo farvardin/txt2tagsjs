@@ -126,3 +126,11 @@ New test cases can easily be added. Create a txt2tags file (ending in ``.t2t``) 
 
 - Maintenance/Contributions 
  - Eric Forgeot
+
+
+This project was forked from https://github.com/coreyti
+We didn't use the built-in fork feature of github, because it's a very different project and it would loose visibility.
+Read ["GitHub forking has one big flaw" http://zbowling.github.io/blog/2011/11/25/github/] about this issue with GitHub.
+
+% http://stackoverflow.com/questions/16052477/delete-fork-dependency-of-a-github-repository
+
