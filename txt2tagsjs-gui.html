@@ -7,19 +7,67 @@
 	<script type="text/javascript" src="txt2tags.js"></script>
 	<script type="text/javascript" src="txt2tagsjs-gui.js"></script>
 	<link rel="stylesheet" href="txt2tagsjs.css" />
+
 </head>
 
 <body>
+
+
+
+
+<script type="text/javascript" src="markitup/jquery-1.6.2.min.js"></script>
+<script type="text/javascript" src="markitup/jquery.markitup.js"></script>
+<script type="text/javascript" src="markitup/sets/default/set.js"></script>
+<link rel="stylesheet" type="text/css" href="markitup/skins/simple/style.css" />
+<link rel="stylesheet" type="text/css" href="markitup/sets/default/style.css" />
+<script type="text/javascript" >
+<!--
+$(document).ready(function()	{
+	// Add markItUp! to your textarea in one line
+	// $('textarea').markItUp( { Settings }, { OptionalExtraSettings } );
+	$('#inputPane').markItUp(mySettings);
+	
+	// You can add content from anywhere in your page
+	// $.markItUp( { Settings } );	
+	$('.add').click(function() {
+ 		$.markItUp( { 	openWith:'<opening tag>',
+						closeWith:'<\/closing tag>',
+						placeHolder:"New content"
+					}
+				);
+ 		return false;
+	});
+	
+	// And you can add/remove markItUp! whenever you want
+	// $(textarea).markItUpRemove();
+	$('.toggle').click(function() {
+		if ($("#inputPane.markItUpEditor").length === 1) {
+ 			$("#inputPane").markItUpRemove();
+			$("span", this).text("get markItUp! back");
+		} else {
+			$('#inputPane').markItUp(mySettings);
+			$("span", this).text("remove markItUp!");
+		}
+ 		return false;
+	});
+});
+-->
+</script>
+
+
+
+
 
 	<div id="pageHeader">
 		<h1>txt2tags.js</h1>
 		<h4>a javascript port of <a href="http://www.txt2tags.org" title="The txt2tags web site">Txt2tags</a></h4>
 	<br/><br/>
 	</div>
-	
+
 	<div id="leftContainer">
 		<div class="paneHeader">
-			<span>Input</span>
+			<span>Input
+			<i><a href="#" class="toggle">(click this link to toggle markItUp)</a></i></span>
 		</div>
 		<textarea id="inputPane" cols="80" rows="20" class="pane">
 

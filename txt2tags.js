@@ -146,9 +146,9 @@ this.makeHtml = function(text) {
     text = text.replace(/\s*===\s*(.+)\s*===/gm,"\n### $1\n");
     text = text.replace(/\s*==\s*(.+)\s*==/gm,"\n<h2>$1</h2>\n");
     text = text.replace(/^\s*=\s*(.+)\s*=/gm,"\n<h1>$1</h1>\n");
-   	text = text.replace(/__([^*]+)__/g, '<u>$1</u>');
-   	text = text.replace(/--([^*]+)--/g, '<del>$1</del>');
-    //text = text.replace(/\/\/([^*]+)\/\//g, '<i>$1</i>');
+   	text = text.replace(/__([^*]+?)__/g, '<u>$1</u>');
+   	text = text.replace(/--([^*]+?)--/g, '<del>$1</del>');
+    text = text.replace(/\/\/([^*]+?)\/\//g, '<i>$1</i>');
     text = text.replace(/^\s*\[(.+).jpg\]/gm, '<img src="$1.jpg"></img>');
     text = text.replace(/^\s*\[(.+).png\]/gm, '<img src="$1.png"></img>');
     text = text.replace(/^\s*\[(.+).gif\]/gm, '<img src="$1.gif"></img>');
@@ -163,9 +163,11 @@ this.makeHtml = function(text) {
     text = text.replace(/\t(.+)$/gm, '<blockquote>$1</blockquote>\n');
     text = text.replace(/\s``` (.+)$/gm, '<pre>$1</pre>');
     text = text.replace(/^\+\s*(.+)$/gm, '1. $1');
-    text = text.replace(/^:\s(.+)$/gm, '<dl><dt>$1</dt><dd>');
-    text = text.replace(/<dl>/gm, '</dd><dl>');
+    text = text.replace(/^:\s(.+)$/gm, '<dl><dt>$1</dt></dl>');/* for definition lists */
+    //text = text.replace(/<dl>/gm, '</dd><dl>');/* for definition lists */
     //text = text.replace(/^\s*\|(.+)\|(.+)\|$/gm, '<table><tr><td>$1</td><td>$2</td><tr></</table>');
+    text = text.replace(/^\t*\|(.+)\|$/gm, '<table><tr><td>$1</td></</table>');
+    //text = text.replace(/<table>([^*]+?)\|([^*]+?)<\/table>/gm, '<table><tr><td>$1</td><td>$2</td></table>');
 
 
 	// Clear the global hashes. If we don't clear these, you get conflicts
@@ -1243,10 +1245,10 @@ var _FormParagraphs = function(text) {
 		else if (str.search(/\S/) >= 0) {
 			str = _RunSpanGamut(str);
 			str = str.replace(/^([ \t]*)/g,"<p>");
-			str = str.replace(/^<p><dl>/g,"<dl>");
-			str = str.replace(/^<p><\/dd>/g,"<dl>");
+			//str = str.replace(/^<p><dl>/g,"<dl>");/* for definition lists */
+			//str = str.replace(/^<p><\/dd>/g,"<dl>");/* for definition lists */
 			str += "</p>";
-            str = str.replace(/<\/p>/g, '</dd></p>');
+            //str = str.replace(/<\/p>/g, '</dd></p>'); /* for definition lists */
 			grafsOut.push(str);
 		}
 
