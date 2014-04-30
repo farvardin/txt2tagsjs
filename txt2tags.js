@@ -139,6 +139,11 @@ this.makeHtml = function(text) {
 //
 
     // txt2tags to markdown or html
+    
+    // protect http://
+    text = text.replace(/https:\/\//g, 'MYHTTPS');
+    text = text.replace(/http:\/\//g, 'MYHTTP');
+    
     text = text.replace(/(-|_){20,}/g, '<hr/>')
     text = text.replace(/(=){20,}/g, '<hr noshade="noshade" size="5"/>')
     text = text.replace(/\s*=====\s*(.+)\s*=====/gm,"\n<h5>$1</h5>\n");
@@ -148,23 +153,35 @@ this.makeHtml = function(text) {
     text = text.replace(/^\s*=\s*(.+)\s*=/gm,"\n<h1>$1</h1>\n");
    	text = text.replace(/\*\*([^\s](.*?[^\s])?)\*\*/g, '<b>$1</b>');
    	text = text.replace(/__([^\s](.*?[^\s])?)__/g, '<u>$1</u>');
-    // __([^\s](.*?[^\s])?)__      -     ([^*]+?)
    	text = text.replace(/--([^\s](.*?[^\s])?)--/g, '<del>$1</del>');
-    // --([^\s](.*?[^\s])?)--         --([^*]+?)--
+    // italic
     text = text.replace(/[^http:]\/\/([^\s](.*?[^\s])?)\/\//g, ' <i>$1</i>');
-    //text = text.replace(/[^http:]\/\/([^*]+?)\/\//g, '<i>$1</i>');
+    // lazy link
+    //text = text.replace(/\s+http:\/\/[^\s](.*?[^\s])[^\]]\s+/gm, ' <a href="http://$1">http://$1</a> ');
+    // normal link
+    text = text.replace(/\[(.+?) (.*?[^\s])?\]/g, '<a href="$2">$1</a>');
+    //text = text.replace(/\[([^\s](.*?)?) ((.*?[^\s])?)\]/g, '<a href="$2">$1</a>');
+    
+    // protect http://
+    text = text.replace(/MYHTTP/g, 'http:\/\/');
+    text = text.replace(/MYHTTPS/g, 'https:\/\/');
+    
+
+    // linked images
     text = text.replace(/^\s*\[\[(.+)?.jpg\] (.+)?\]/gm, '<a href="$2"><img src="$1.jpg"></img></a>');
     text = text.replace(/^\s*\[\[(.+)?.png\] (.+)?\]/gm, '<a href="$2"><img src="$1.png"></img></a>');
     text = text.replace(/^\s*\[\[(.+)?.gif\] (.+)?\]/gm, '<a href="$2"><img src="$1.gif"></img></a>');
+    // images
     text = text.replace(/^\s*\[(.+)?.jpg\]/gm, '<img src="$1.jpg"></img>');
     text = text.replace(/^\s*\[(.+)?.png\]/gm, '<img src="$1.png"></img>');
     text = text.replace(/^\s*\[(.+)?.gif\]/gm, '<img src="$1.gif"></img>');
-    text = text.replace(/http:<i>/gm, 'http://');
-    text = text.replace(/http:<\/i>/gm, 'http://');
+    //text = text.replace(/http:<i>/gm, 'http://');
+   // text = text.replace(/http:<\/i>/gm, 'http://');
+
     //text = text.replace(/^\s*\[(.+) http:(.+)\]/gm, '<a href="http:$2">$1</a>');
     //text = text.replace(/\[(.+)\s(.+?)\s(.+)\]/g, '<a href="$3">$1 $2</a>');
     //text = text.replace(/\[(.+?)\s(.+)\]/g, '<a href="$2">$1</a>');
-    text = text.replace(/\[(.+[^\]]) ([^ ]?.*?)\]/g, '<a href="$2">$1</a>');
+    
     text = text.replace(/^%(.+)$/gm, '');
     text = text.replace(/\t\t(.+)$/gm, '<blockquote><blockquote>$1</blockquote></blockquote>\n');
     text = text.replace(/\t(.+)$/gm, '<blockquote>$1</blockquote>\n');
