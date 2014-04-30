@@ -121,7 +121,7 @@ function startGui() {
 	onPaneSettingChanged();
 
 	// build the converter
-	converter = new Showdown.converter();
+	converter = new Txt2tags.converter();
 
 	// do an initial conversion to avoid a hiccup
 	convertText();

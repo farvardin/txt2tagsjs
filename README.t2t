@@ -80,17 +80,28 @@ In theory, Txt2tags.js will work in any browser that supports ECMA 262 3rd Editi
 
 In most cases, Txt2tags' output is identical to that of Python Txt2tags v2.6. What follows is a list of all known limitations. Please file an issue if you find more.
 
+
+This should work correctly:
+
+- headings
+- beautifulers (**bold**,
+//italic//, --strike-- and __underline__)
+- Pre-Formatted Text
+- lists
+
+
 This doesn't work at all (yet):
 
-- Tables
-- definition lists
 - macros
 - preprocessor (preproc / postproc
+- 3 lines header 
 
 This could be improved (soon):
 
-- images
-- links
+- Tables
+- definition lists
+- links (some errors when multiple links are on the same line)
+- images (centering images)
 - some ordered **sublists** will be turned to unordered lists when you mix both types
 
 

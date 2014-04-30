@@ -59,12 +59,12 @@
 //
 // Showdown namespace
 //
-var Showdown = { extensions: {} };
+var Txt2tags = { extensions: {} };
 
 //
 // forEach
 //
-var forEach = Showdown.forEach = function(obj, callback) {
+var forEach = Txt2tags.forEach = function(obj, callback) {
 	if (typeof obj.forEach === 'function') {
 		obj.forEach(callback);
 	} else {
@@ -88,7 +88,7 @@ var stdExtName = function(s) {
 // Wraps all "globals" so that the only thing
 // exposed is makeHtml().
 //
-Showdown.converter = function(converter_options) {
+Txt2tags.converter = function(converter_options) {
 
 //
 // Globals:
@@ -122,10 +122,10 @@ if (typeof module !== 'undefind' && typeof exports !== 'undefined' && typeof req
 		}).map(function(file){
 			return file.replace(/\.js$/, '');
 		});
-		// Load extensions into Showdown namespace
-		Showdown.forEach(extensions, function(ext){
+		// Load extensions into Txt2tags namespace
+		Txt2tags.forEach(extensions, function(ext){
 			var name = stdExtName(ext);
-			Showdown.extensions[name] = require('./extensions/' + ext);
+			Txt2tags.extensions[name] = require('./extensions/' + ext);
 		});
 	}
 }
@@ -141,17 +141,20 @@ this.makeHtml = function(text) {
     // txt2tags to markdown or html
     text = text.replace(/(-|_){20,}/g, '<hr/>')
     text = text.replace(/(=){20,}/g, '<hr noshade="noshade" size="5"/>')
-    text = text.replace(/\s*=====\s*(.+)\s*=====/gm,"\n##### $1\n");
-    text = text.replace(/\s*====\s*(.+)\s*====/gm,"\n#### $1\n");
-    text = text.replace(/\s*===\s*(.+)\s*===/gm,"\n### $1\n");
+    text = text.replace(/\s*=====\s*(.+)\s*=====/gm,"\n<h5>$1</h5>\n");
+    text = text.replace(/\s*====\s*(.+)\s*====/gm,"\n<h4>$1</h4>\n");
+    text = text.replace(/\s*===\s*(.+)\s*===/gm,"\n<h3>$1</h3>\n");
     text = text.replace(/\s*==\s*(.+)\s*==/gm,"\n<h2>$1</h2>\n");
     text = text.replace(/^\s*=\s*(.+)\s*=/gm,"\n<h1>$1</h1>\n");
    	text = text.replace(/__([^*]+?)__/g, '<u>$1</u>');
    	text = text.replace(/--([^*]+?)--/g, '<del>$1</del>');
-    text = text.replace(/\/\/([^*]+?)\/\//g, '<i>$1</i>');
-    text = text.replace(/^\s*\[(.+).jpg\]/gm, '<img src="$1.jpg"></img>');
-    text = text.replace(/^\s*\[(.+).png\]/gm, '<img src="$1.png"></img>');
-    text = text.replace(/^\s*\[(.+).gif\]/gm, '<img src="$1.gif"></img>');
+    text = text.replace(/[^http:]\/\/([^*]+?)\/\//g, '<i>$1</i>');
+    text = text.replace(/^\s*\[\[(.+)?.jpg\] (.+)?\]/gm, '<a href="$2"><img src="$1.jpg"></img></a>');
+    text = text.replace(/^\s*\[\[(.+)?.png\] (.+)?\]/gm, '<a href="$2"><img src="$1.png"></img></a>');
+    text = text.replace(/^\s*\[\[(.+)?.gif\] (.+)?\]/gm, '<a href="$2"><img src="$1.gif"></img></a>');
+    text = text.replace(/^\s*\[(.+)?.jpg\]/gm, '<img src="$1.jpg"></img>');
+    text = text.replace(/^\s*\[(.+)?.png\]/gm, '<img src="$1.png"></img>');
+    text = text.replace(/^\s*\[(.+)?.gif\]/gm, '<img src="$1.gif"></img>');
     text = text.replace(/http:<i>/gm, 'http://');
     text = text.replace(/http:<\/i>/gm, 'http://');
     //text = text.replace(/^\s*\[(.+) http:(.+)\]/gm, '<a href="http:$2">$1</a>');
@@ -166,7 +169,10 @@ this.makeHtml = function(text) {
     text = text.replace(/^:\s(.+)$/gm, '<dl><dt>$1</dt></dl>');/* for definition lists */
     //text = text.replace(/<dl>/gm, '</dd><dl>');/* for definition lists */
     //text = text.replace(/^\s*\|(.+)\|(.+)\|$/gm, '<table><tr><td>$1</td><td>$2</td><tr></</table>');
-    text = text.replace(/^\t*\|(.+)\|$/gm, '<table><tr><td>$1</td></</table>');
+    text = text.replace(/^[ ]*\|\|(.+)\|$/gm, '<table><tr><th>$1</td></th></table>');
+    text = text.replace(/^[ ]*\|\_(.+)\|$/gm, '<table><tr><th>$1</td></th></table>');
+    text = text.replace(/^[ ]*\|\/(.+)\|$/gm, '<table><tr><th>$1</td></th></table>');
+    text = text.replace(/^[ ]*\|(.+)\|$/gm, '<table><tr><td>$1</td></tr></table>');
     //text = text.replace(/<table>([^*]+?)\|([^*]+?)<\/table>/gm, '<table><tr><td>$1</td><td>$2</td></table>');
 
 
@@ -206,7 +212,7 @@ this.makeHtml = function(text) {
 	text = text.replace(/^[ \t]+$/mg,"");
 
 	// Run language extensions
-	Showdown.forEach(g_lang_extensions, function(x){
+	Txt2tags.forEach(g_lang_extensions, function(x){
 		text = _ExecuteExtension(x, text);
 	});
 
@@ -231,7 +237,7 @@ this.makeHtml = function(text) {
 	text = text.replace(/~T/g,"~");
 
 	// Run output modifiers
-	Showdown.forEach(g_output_modifiers, function(x){
+	Txt2tags.forEach(g_output_modifiers, function(x){
 		text = _ExecuteExtension(x, text);
 	});
 
@@ -247,16 +253,16 @@ if (converter_options && converter_options.extensions) {
   var self = this;
 
 	// Iterate over each plugin
-	Showdown.forEach(converter_options.extensions, function(plugin){
+	Txt2tags.forEach(converter_options.extensions, function(plugin){
 
 		// Assume it's a bundled plugin if a string is given
 		if (typeof plugin === 'string') {
-			plugin = Showdown.extensions[stdExtName(plugin)];
+			plugin = Txt2tags.extensions[stdExtName(plugin)];
 		}
 
 		if (typeof plugin === 'function') {
 			// Iterate over each extension within that plugin
-			Showdown.forEach(plugin(self), function(ext){
+			Txt2tags.forEach(plugin(self), function(ext){
 				// Sort extensions by type
 				if (ext.type) {
 					if (ext.type === 'language' || ext.type === 'lang') {
@@ -1161,10 +1167,10 @@ var _DoItalicsAndBold = function(text) {
 
 	// <strong> must go first:
 	text = text.replace(/(\*\*|__)(?=\S)([^\r]*?\S[*_]*)\1/g,
-		"<strong>$2</strong>");
+		"<b>$2</b>");
 
 	text = text.replace(/(\*|_)(?=\S)([^\r]*?\S)\1/g,
-		"<em>$2</em>");
+		"<i>$2</i>");
 
 	return text;
 }
@@ -1472,18 +1478,18 @@ var escapeCharacters_callback = function(wholeMatch,m1) {
 }
 
   
-} // end of Showdown.converter
+} // end of Txt2tags.converter
 
 
 // export
-if (typeof module !== 'undefined') module.exports = Showdown;
+if (typeof module !== 'undefined') module.exports = Txt2tags;
 
 // stolen from AMD branch of underscore
 // AMD define happens at the end for compatibility with AMD loaders
 // that don't enforce next-turn semantics on modules.
 if (typeof define === 'function' && define.amd) {
-    define('showdown', function() {
-        return Showdown;
+    define('txt2tags', function() {
+        return Txt2tags;
     });
 }
 
