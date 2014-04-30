@@ -159,7 +159,10 @@ this.makeHtml = function(text) {
     // lazy link
     //text = text.replace(/\s+http:\/\/[^\s](.*?[^\s])[^\]]\s+/gm, ' <a href="http://$1">http://$1</a> ');
     // normal link
-    text = text.replace(/\[(.+?) (.*?[^\s])?\]/g, '<a href="$2">$1</a>');
+    text = text.replace(/\[(.+?) MYHTTPS(.*?[^\s])?\]/g, '<a href="MYHTTPS$2">$1</a>');
+    text = text.replace(/\[(.+?) MYHTTP(.*?[^\s])?\]/g, '<a href="MYHTTP$2">$1</a>');
+    //text = text.replace(/\[(.+?) (.*?[^\s])?\]/g, '<a href="$2">$1</a>');
+        //text = text.replace(/\[(.+)\s(.*?[^\s])?\]/g, '<a href="$2">$1</a>');
     //text = text.replace(/\[([^\s](.*?)?) ((.*?[^\s])?)\]/g, '<a href="$2">$1</a>');
     
     // protect http://
