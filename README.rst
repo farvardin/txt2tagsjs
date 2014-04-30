@@ -88,8 +88,7 @@ This should work correctly:
 
 
 - headings
-- beautifulers (**bold**,
-*italic*, strike and underline)
+- beautifulers (**bold**, *italic*, strike and underline)
 - Pre-Formatted Text
 - lists
 

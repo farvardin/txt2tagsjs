@@ -1,7 +1,7 @@
 
 
 %!target: rst
-
+%!style: ../css/style.css
 
 = txt2tags.js =
 
@@ -9,6 +9,9 @@
 - markdown2txt2tags.js: an online quicker & dirty converter from markdown to txt2tags
 
 //(both based on showdown)//
+
+
+Download [txt2tags.js http://wiki.txt2tags.org/demos/txt2tagsjs.zip]
 
 
 == Original Attributions ==
@@ -27,13 +30,37 @@ txt2tags.js hack by Eric Forgeot
 == Quick Example ==
 
 ```
-var Txt2tags = require('txt2tags');
-var converter = new Txt2tags.converter();
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width" />
+	<title>Txt2tagsjs - Txt2tags in Javascript</title>
+	<script type="text/javascript" src="txt2tags.js"></script>
+	<link rel="stylesheet" href="txt2tagsjs.css" />
+</head>
 
-converter.makeHtml('== hello txt2tags! ==');
+<body>
 
-// <h2 id="hellotxt2tags">hello, txt2tags!</h2>
+<script>
+
+	var text = "== Hello ==\nTxt2tags **rocks** and __even more__...\nGo and visit \n\n- http://www.txt2tags.org";
+	var converter = new Txt2tags.converter();
+	var myhtml = converter.makeHtml(text);
+	
+document.write(myhtml);
+
+</script>
+
+</body>
+</html>
 ```
+
+See [sample_inline.html sample_inline.html] and [sample_external_file.html sample_external_file.html] for some working examples.
+
+You can also see [txt2tagsjs-gui.html txt2tagsjs-gui.html] for a live renderer on txt2tags.
+
+Furthermore, there is [markdown2txt2tags/markdown2txt2tags.html markdown2txt2tags/markdown2txt2tags.html] which can convert from markdown to txt2tags syntax.
+
 
 
 == What's it for? ==
@@ -84,16 +111,16 @@ In most cases, Txt2tags' output is identical to that of Python Txt2tags v2.6. Wh
 This should work correctly:
 
 - headings
-- beautifulers (**bold**,
-//italic//, --strike-- and __underline__)
-- Pre-Formatted Text
+- beautifulers (**bold**, //italic//, --strike-- and __underline__)
+- Pre-Formatted Text, blockquote, code
 - lists
+- comments
 
 
 This doesn't work at all (yet):
 
 - macros
-- preprocessor (preproc / postproc
+- preprocessor (preproc / postproc)
 - 3 lines header 
 
 This could be improved (soon):

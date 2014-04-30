@@ -72,9 +72,66 @@ $(document).ready(function()	{
 		<textarea id="inputPane" cols="80" rows="20" class="pane">
 
 
+= tests =
+
+
+
+== test bug ==
+
+
+
+You'll need a recent version of [firefox http://www.mozilla.org/] to be able to read this video.
+
+
+You'll need a recent version of [firefox http://www.mozilla.org/] or [chrome http://www.google.com/chrome/] browser to be able to read this video.
+
+
+
+//You'll need a recent version of [firefox http://www.mozilla.org/] or [chrome http://www.google.com/chrome/] browser to be able to read this video.//
+
+
+//You'll need a recent version of [firefox http://www.mozilla.org/] or [chrome https://www.google.com/chrome/] browser to be able to read this video.//
+
+
+//You'll need a recent version of [firefox http://www.mozilla.org/] or [chrome https://www.google.com/chrome/] or [opera http://www.opera.com] browser to be able to read this video.//
+
+//You'll need a recent version of [firefox http://www.mozilla.org/] or [chrome http://www.google.com/chrome/] or [opera http://www.opera.com] browser to be able to read this video.//
+
+{ ~~ }test [secure ftp sftp://test.com]{/~~ }
+
+
+test --- test 
+
+
+== Test markup (bold, underlined etc) ==
+
+
+- Should not bold or italic: *test*
+- Should not bold or italic: _test_
+- Should not bold or italic: _test_ _test_ *test*
+- Should not bold: **test no bold **
+- Should not bold: **test no bold **
+- should not bold: test **no bold **truc
+
+- Should bold: **another** and **i**
+
+- should not strike: --list --option2
+- should not underline: __void __void
+- should not italic: //truc1 //truc2
+
+- should --strike out--, __underline this__ and //italic this//
+
+
+
 =  Introduction  =
 
 Welcome to the txt2tags sample file.
+
+You can also specify an [explicit link http://duh.org]
+or an [explicit email duh@somewhere.com] with label.
+
+New [test for the txt2tags website http://www.txt2tags.org].
+
 
 Here you have examples and a brief explanation of all
 marks.
@@ -93,7 +150,7 @@ Lines with balanced equal signs = around are titles.
 %TODO link to program site http://txt2tags.org
 
 
-              =  Fonts and Beautifiers  =
+= Fonts and Beautifiers =
 
 We have two sets of fonts:
 
@@ -105,7 +162,7 @@ pre-formatted text.
 We will now enter on a subtitle...
 
 
-                  ==  Beautifiers  ==
+== Beautifiers ==
 
 The text marks for beautifiers are simple, just as you
 type on a plain text email message.
@@ -117,7 +174,7 @@ The **//bold italic//** style is also supported as a
 combination.
 
 
-              ==  Pre-Formatted Text  ==
+==  Pre-Formatted Text  ==
 
 We can put a code sample or other pre-formatted text:
 ```
@@ -127,6 +184,7 @@ We can put a code sample or other pre-formatted text:
 
 And also, it's easy to put a one line pre-formatted
 text:
+
 ``` prompt$ ls /etc
 
 Or use ``pre-formatted`` inside sentences.
@@ -144,6 +202,8 @@ as long as the horizontal line:
 
 You can also specify an [explicit link http://duh.org]
 or an [explicit email duh@somewhere.com] with label.
+
+New [test for the txt2tags website http://www.txt2tags.org].
 
 And remember,
 	A TAB in front of the line does a quotation.

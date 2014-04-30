@@ -146,9 +146,13 @@ this.makeHtml = function(text) {
     text = text.replace(/\s*===\s*(.+)\s*===/gm,"\n<h3>$1</h3>\n");
     text = text.replace(/\s*==\s*(.+)\s*==/gm,"\n<h2>$1</h2>\n");
     text = text.replace(/^\s*=\s*(.+)\s*=/gm,"\n<h1>$1</h1>\n");
-   	text = text.replace(/__([^*]+?)__/g, '<u>$1</u>');
-   	text = text.replace(/--([^*]+?)--/g, '<del>$1</del>');
-    text = text.replace(/[^http:]\/\/([^*]+?)\/\//g, '<i>$1</i>');
+   	text = text.replace(/\*\*([^\s](.*?[^\s])?)\*\*/g, '<b>$1</b>');
+   	text = text.replace(/__([^\s](.*?[^\s])?)__/g, '<u>$1</u>');
+    // __([^\s](.*?[^\s])?)__      -     ([^*]+?)
+   	text = text.replace(/--([^\s](.*?[^\s])?)--/g, '<del>$1</del>');
+    // --([^\s](.*?[^\s])?)--         --([^*]+?)--
+    text = text.replace(/[^http:]\/\/([^\s](.*?[^\s])?)\/\//g, ' <i>$1</i>');
+    //text = text.replace(/[^http:]\/\/([^*]+?)\/\//g, '<i>$1</i>');
     text = text.replace(/^\s*\[\[(.+)?.jpg\] (.+)?\]/gm, '<a href="$2"><img src="$1.jpg"></img></a>');
     text = text.replace(/^\s*\[\[(.+)?.png\] (.+)?\]/gm, '<a href="$2"><img src="$1.png"></img></a>');
     text = text.replace(/^\s*\[\[(.+)?.gif\] (.+)?\]/gm, '<a href="$2"><img src="$1.gif"></img></a>');
@@ -1166,11 +1170,11 @@ var _EncodeCode = function(text) {
 var _DoItalicsAndBold = function(text) {
 
 	// <strong> must go first:
-	text = text.replace(/(\*\*|__)(?=\S)([^\r]*?\S[*_]*)\1/g,
-		"<b>$2</b>");
+	//text = text.replace(/(\*\*)(?=\S)([^\r]*?\S[*_]*)\1/g,
+	//	"<b>$2</b>");
 
-	text = text.replace(/(\*|_)(?=\S)([^\r]*?\S)\1/g,
-		"<i>$2</i>");
+	//text = text.replace(/(_)(?=\S)([^\r]*?\S)\1/g,
+	//	"<i>$2</i>");
 
 	return text;
 }
