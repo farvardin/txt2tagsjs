@@ -138,53 +138,64 @@ this.makeHtml = function(text) {
 // and <img> tags get encoded.
 //
 
-    // txt2tags to markdown or html
+      // ------- TXT2TAGS to html //
     
-    // protect http://
+    // ------ protect http:// before parsing 
     text = text.replace(/https:\/\//g, 'MYHTTPS');
     text = text.replace(/http:\/\//g, 'MYHTTP');
-    
+    text = text.replace(/sftp:\/\//g, 'MYSFTP');
+    text = text.replace(/ftps:\/\//g, 'MYFTPS');
+    text = text.replace(/ftp:\/\//g, 'MYFTP');
+    // ------ horizontal line (---------------------)
     text = text.replace(/(-|_){20,}/g, '<hr/>')
     text = text.replace(/(=){20,}/g, '<hr noshade="noshade" size="5"/>')
+    // ------ headings      = h1 =  /   == h2 ==
     text = text.replace(/\s*=====\s*(.+)\s*=====/gm,"\n<h5>$1</h5>\n");
     text = text.replace(/\s*====\s*(.+)\s*====/gm,"\n<h4>$1</h4>\n");
     text = text.replace(/\s*===\s*(.+)\s*===/gm,"\n<h3>$1</h3>\n");
     text = text.replace(/\s*==\s*(.+)\s*==/gm,"\n<h2>$1</h2>\n");
     text = text.replace(/^\s*=\s*(.+)\s*=/gm,"\n<h1>$1</h1>\n");
+    // ------ bold / strong **item**
    	text = text.replace(/\*\*([^\s](.*?[^\s])?)\*\*/g, '<b>$1</b>');
+    // ------ underline     __item__
    	text = text.replace(/__([^\s](.*?[^\s])?)__/g, '<u>$1</u>');
+    // ------ strikeout     --item--
    	text = text.replace(/--([^\s](.*?[^\s])?)--/g, '<del>$1</del>');
-    // italic
-    text = text.replace(/[^http:]\/\/([^\s](.*?[^\s])?)\/\//g, ' <i>$1</i>');
-    // lazy link
-    //text = text.replace(/\s+http:\/\/[^\s](.*?[^\s])[^\]]\s+/gm, ' <a href="http://$1">http://$1</a> ');
-    // normal link
-    text = text.replace(/\[(.+?) MYHTTPS(.*?[^\s])?\]/g, '<a href="MYHTTPS$2">$1</a>');
-    text = text.replace(/\[(.+?) MYHTTP(.*?[^\s])?\]/g, '<a href="MYHTTP$2">$1</a>');
-    //text = text.replace(/\[(.+?) (.*?[^\s])?\]/g, '<a href="$2">$1</a>');
-        //text = text.replace(/\[(.+)\s(.*?[^\s])?\]/g, '<a href="$2">$1</a>');
-    //text = text.replace(/\[([^\s](.*?)?) ((.*?[^\s])?)\]/g, '<a href="$2">$1</a>');
+    // ------ italic /em    //item//
+    text = text.replace(/[^(ht|f)tps?:]\/\/([^\s](.*?[^\s])?)\/\//g, ' <i>$1</i>');
     
-    // protect http://
-    text = text.replace(/MYHTTP/g, 'http:\/\/');
+    // ------ normal link   [item http://url] 
+    text = text.replace(/\[(.*?) MYSFTP(.*?)\]/g, '<a href="MYSFTP$2">$1</a>');
+    text = text.replace(/\[(.*?) MYFTPS(.*?)\]/g, '<a href="MYFTPS$2">$1</a>');
+    text = text.replace(/\[(.*?) MYFTP(.*?)\]/g, '<a href="MYFTP$2">$1</a>');
+    text = text.replace(/\[(.*?) MYHTTPS(.*?)\]/g, '<a href="MYHTTPS$2">$1</a>');
+    text = text.replace(/\[(.*?) MYHTTP(.*?)\]/g, '<a href="MYHTTP$2">$1</a>');
+    
+    // revert protected http://
+    text = text.replace(/MYSFTP/g, 'sftp:\/\/');
+    text = text.replace(/MYFTPS/g, 'ftps:\/\/');
+    text = text.replace(/MYFTP/g, 'ftp:\/\/');
     text = text.replace(/MYHTTPS/g, 'https:\/\/');
-    
+    text = text.replace(/MYHTTP/g, 'http:\/\/');
 
-    // linked images
+    // ------ lazy link
+    //text = text.replace(/www\.(.*?[^\s])\.(.*?[^\s(">)])\s+/gm, ' <a href="http://$1.$2">http://$1.$2</a> ');
+
+    //text = text.replace(/[^(href=")](www(.*?[^\s])\s+)/gi,"<a href=\"http://www$1\">http://www.$1</a>");
+        
+    // ------ auto link     http://url
+    text = text.replace(/[^(href=")]((https|http|ftps|sftp|dict):[^'"\s]+)/gi,"<a href=\"$1\">$1</a>");
+      
+    // ------ linked images 
     text = text.replace(/^\s*\[\[(.+)?.jpg\] (.+)?\]/gm, '<a href="$2"><img src="$1.jpg"></img></a>');
     text = text.replace(/^\s*\[\[(.+)?.png\] (.+)?\]/gm, '<a href="$2"><img src="$1.png"></img></a>');
     text = text.replace(/^\s*\[\[(.+)?.gif\] (.+)?\]/gm, '<a href="$2"><img src="$1.gif"></img></a>');
-    // images
+    // ------ images       [image.png]
     text = text.replace(/^\s*\[(.+)?.jpg\]/gm, '<img src="$1.jpg"></img>');
     text = text.replace(/^\s*\[(.+)?.png\]/gm, '<img src="$1.png"></img>');
     text = text.replace(/^\s*\[(.+)?.gif\]/gm, '<img src="$1.gif"></img>');
-    //text = text.replace(/http:<i>/gm, 'http://');
-   // text = text.replace(/http:<\/i>/gm, 'http://');
 
-    //text = text.replace(/^\s*\[(.+) http:(.+)\]/gm, '<a href="http:$2">$1</a>');
-    //text = text.replace(/\[(.+)\s(.+?)\s(.+)\]/g, '<a href="$3">$1 $2</a>');
-    //text = text.replace(/\[(.+?)\s(.+)\]/g, '<a href="$2">$1</a>');
-    
+    // ------ lists etc
     text = text.replace(/^%(.+)$/gm, '');
     text = text.replace(/\t\t(.+)$/gm, '<blockquote><blockquote>$1</blockquote></blockquote>\n');
     text = text.replace(/\t(.+)$/gm, '<blockquote>$1</blockquote>\n');
@@ -199,6 +210,7 @@ this.makeHtml = function(text) {
     text = text.replace(/^[ ]*\|(.+)\|$/gm, '<table><tr><td>$1</td></tr></table>');
     //text = text.replace(/<table>([^*]+?)\|([^*]+?)<\/table>/gm, '<table><tr><td>$1</td><td>$2</td></table>');
 
+        // ------ // end of txt2tags to html
 
 	// Clear the global hashes. If we don't clear these, you get conflicts
 	// from other articles when generating a page which contains more than
@@ -1340,6 +1352,7 @@ var _EncodeBackslashEscapes = function(text) {
 var _DoAutoLinks = function(text) {
 
 	text = text.replace(/<((https?|ftp|dict):[^'">\s]+)>/gi,"<a href=\"$1\">$1</a>");
+
 
 	// Email addresses: <address@domain.foo>
 
