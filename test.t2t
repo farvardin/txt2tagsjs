@@ -120,7 +120,12 @@ identifier (plus).
 + four
 
 
-                ==  Definition List  ==
+- new list
+- new list
+
+  
+
+==  Definition List  ==
 
 The definition list identifier is a colon, followed by
 the term. The term contents is placed on the next line.

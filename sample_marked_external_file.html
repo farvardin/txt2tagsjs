@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Txt2tags parser using javascript and marked.js</title>
+  <script src="jquery.js"></script>
+    <script src="marked.js"></script>
+  <link rel="stylesheet" href="txt2tagsjs.css" />
+  <script>
+      
+marked.setOptions({
+  //renderer: new marked.Renderer(),
+  gfm: true,
+  tables: true,
+  //breaks: false,
+  //pedantic: false,
+  //sanitize: true,
+  //smartLists: true,
+  //smartypants: false
+});
+
+		var truc = $(document).ready(function() {
+			$.get('test.t2t', function(data) {
+			  $("#container").html(marked(data));
+			}, 'text');
+		});
+
+// note: replace .html(marked(data)) by .text(marked(data)) so you can see the html source (userful for debugging)
+	
+  </script>
+</head>
+<body>
+
+<script>
+</script>
+
+
+<div id="container"></div>
+
+</body>
+</html>

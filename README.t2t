@@ -3,63 +3,18 @@
 %!target: rst
 %!style: ../css/style.css
 
-= txt2tags.js =
+= txt2tags.js project =
 
-- txt2tags.js: a JavaScript port of txt2tags
+- txt2tags.js: a txt2tags parser in javascript
 - markdown2txt2tags.js: an online quicker & dirty converter from markdown to txt2tags
-
 //(both based on showdown)//
+- marked.js: a fork of marked.js, which can parse and convert txt2tags file to html. 
+It was not "rebranded", so it can be easily integrated into other projects already using marked.
+
 
 
 Download [txt2tags.js http://wiki.txt2tags.org/demos/txt2tagsjs.zip]
 
-
-== Original Attributions ==
-
-Showdown Copyright (c) 2007 John Fraser. http://www.attacklab.net/
-
-Original Markdown Copyright (c) 2004-2005 John Gruber http://daringfireball.net/projects/markdown/
-
-Redistributable under a BSD-style open source license. See license.txt for more information.
-
-Showdown maintained by Corey Innis https://github.com/coreyti and others
-
-txt2tags.js hack by Eric Forgeot
-
-
-== Quick Example ==
-
-```
-<html>
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="viewport" content="width=device-width" />
-	<title>Txt2tagsjs - Txt2tags in Javascript</title>
-	<script type="text/javascript" src="txt2tags.js"></script>
-	<link rel="stylesheet" href="txt2tagsjs.css" />
-</head>
-
-<body>
-
-<script>
-
-	var text = "== Hello ==\nTxt2tags **rocks** and __even more__...\nGo and visit \n\n- http://www.txt2tags.org";
-	var converter = new Txt2tags.converter();
-	var myhtml = converter.makeHtml(text);
-	
-document.write(myhtml);
-
-</script>
-
-</body>
-</html>
-```
-
-See [sample_inline.html sample_inline.html] and [sample_external_file.html sample_external_file.html] for some working examples.
-
-You can also see [txt2tagsjs-gui.html txt2tagsjs-gui.html] for a live renderer on txt2tags.
-
-Furthermore, there is [markdown2txt2tags/markdown2txt2tags.html markdown2txt2tags/markdown2txt2tags.html] which can convert from markdown to txt2tags syntax.
 
 
 
@@ -88,17 +43,56 @@ A Txt2tags.js front-end can send back text in Txt2tags, HTML or both, so you can
 
 
 
+
+== Quick Example ==
+
+```
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width" />
+	<title>Txt2tagsjs - Txt2tags in Javascript</title>
+	<script type="text/javascript" src="txt2tags.js"></script>
+	<link rel="stylesheet" href="txt2tagsjs.css" />
+</head>
+
+<body>
+
+<script>
+
+	var text = "== Title ==\n **bold**, __underline__, //italic//.\n- list item 1\n- list item 2";
+	var converter = new Txt2tags.converter();
+	var myhtml = converter.makeHtml(text);
+	
+document.write(myhtml);
+
+</script>
+
+</body>
+</html>
+```
+
+See [sample_inline.html sample_inline.html] and [sample_external_file.html sample_external_file.html] for some working examples.
+
+You can also see [txt2tagsjs-gui.html txt2tagsjs-gui.html] for a live renderer on txt2tags.
+
+Furthermore, there is [markdown2txt2tags/markdown2txt2tags.html markdown2txt2tags/markdown2txt2tags.html] which can convert from markdown to txt2tags syntax.
+
+
+
+
+
+
 == Browser Compatibility ==
 
 Txt2tags.js has been tested successfully with:
 
-
-- Firefox 1.5 and 2.0
-- Internet Explorer 6 and 7
-- Safari 2.0.4
-- Opera 8.54 and 9.10
-- Netscape 8.1.2
-- Konqueror 3.5.4
+- Firefox 
+- Chromium
+% - Safari 
+% - Opera
+- Konqueror
+% - Internet Explorer
 
 In theory, Txt2tags.js will work in any browser that supports ECMA 262 3rd Edition (JavaScript 1.5). The converter itself might even work in things that aren't web browsers, like Acrobat. No promises.
 
@@ -125,7 +119,7 @@ This doesn't work at all (yet):
 
 This could be improved (soon):
 
-- Tables
+- Tables (especially in txt2tags.js)
 - definition lists
 - links (some errors when multiple links are on the same line)
 - images (centering images)
@@ -171,4 +165,18 @@ We didn't use the built-in fork feature of github, because it's a very different
 Read ["GitHub forking has one big flaw" http://zbowling.github.io/blog/2011/11/25/github/] about this issue with GitHub.
 
 % http://stackoverflow.com/questions/16052477/delete-fork-dependency-of-a-github-repository
+
+== Original Attributions ==
+
+Showdown Copyright (c) 2007 John Fraser. http://www.attacklab.net/
+
+Original Markdown Copyright (c) 2004-2005 John Gruber http://daringfireball.net/projects/markdown/
+
+Redistributable under a BSD-style open source license. See license.txt for more information.
+
+Showdown maintained by Corey Innis https://github.com/coreyti and others
+
+Marked.js Copyright (c) 2011-2014, Christopher Jeffrey. (MIT Licensed)
+
+txt2tags.js hacks by Eric Forgeot
 
