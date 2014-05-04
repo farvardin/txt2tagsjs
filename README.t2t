@@ -123,7 +123,7 @@ This could be improved (soon):
 - definition lists
 - links (some errors when multiple links are on the same line)
 - images (centering images)
-- some ordered **sublists** will be turned to unordered lists when you mix both types
+- some ordered **sublists** will be turned to unordered lists when you mix both types (txt2tags.js only)
 
 
 
