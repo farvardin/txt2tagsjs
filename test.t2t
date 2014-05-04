@@ -49,8 +49,8 @@ combination.
 
 We can put a code sample or other pre-formatted text:
 ```
-  here    is     pre-formatted
-//marks// are  **not**  ``interpreted``
+  here    is     pre-formatted __text__.
+//Marks// are  **not**  ``interpreted`` --here--.
 ```
 
 And also, it's easy to put a one line pre-formatted

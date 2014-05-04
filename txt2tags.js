@@ -162,8 +162,8 @@ this.makeHtml = function(text) {
     // ------ strikeout     --item--
    	text = text.replace(/--([^\s](.*?[^\s])?)--/g, '<del>$1</del>');
     // ------ italic /em    //item//
-    text = text.replace(/[^(ht|f)tps?:]\/\/([^\s](.*?[^\s])?)\/\//g, ' <i>$1</i>');
-    
+    //text = text.replace(/[^(ht|f)tps?:]\/\/([^\s](.*?[^\s])?)\/\//g, ' <i>$1</i>');
+	text = text.replace(/\/\/([^\s](.*?[^\s])?)\/\//g, ' <i>$1</i>');      
     // ------ linked images (note: first before links)
     text = text.replace(/^\s*\[\[(.+)?.jpg\] (.+)?\]/gm, '<a href="$2"><img src="$1.jpg"></img></a>');
     text = text.replace(/^\s*\[\[(.+)?.png\] (.+)?\]/gm, '<a href="$2"><img src="$1.png"></img></a>');
@@ -1203,10 +1203,10 @@ var _EncodeCode = function(text) {
 var _DoItalicsAndBold = function(text) {
 
 	// <strong> must go first:
-	//text = text.replace(/(\*\*)(?=\S)([^\r]*?\S[*_]*)\1/g,
+	//text = text.replace(/(\*\*|__)(?=\S)([^\r]*?\S[*_]*)\1/g,
 	//	"<b>$2</b>");
 
-	//text = text.replace(/(_)(?=\S)([^\r]*?\S)\1/g,
+	//text = text.replace(/(\*|_)(?=\S)([^\r]*?\S)\1/g,
 	//	"<i>$2</i>");
 
 	return text;
