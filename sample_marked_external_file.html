@@ -19,8 +19,14 @@ marked.setOptions({
 });
 
 		var truc = $(document).ready(function() {
-			$.get('test.t2t', function(data) {
+			$.get('test.t2t', function(data){
 			  $("#container").html(marked(data));
+			}, 'text');
+		});
+
+		var truc2 = $(document).ready(function() {
+			$.get('README.t2t', function(data){
+			  $("#container2").html(marked(data));
 			}, 'text');
 		});
 
@@ -35,6 +41,7 @@ marked.setOptions({
 
 
 <div id="container"></div>
+<div id="container2"></div>
 
 </body>
 </html>

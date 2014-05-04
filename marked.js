@@ -160,7 +160,7 @@ Lexer.prototype.lex = function(src) {
     src = src.replace(/(-|_){20,}/g, '<hr/>')
     src = src.replace(/(=){20,}/g, '<hr noshade="noshade" size="5"/>')
     // ------ headings      = h1 =  /   == h2 ==
-    // we add 2 extra new lines to be sure it will end 
+    // we add 2 extra new lines to be sure it will close ending lists
     src = src.replace(/\s*=====\s*(.+)\s*=====/gm,"\n\n<h5>$1</h5>\n");
     src = src.replace(/\s*====\s*(.+)\s*====/gm,"\n\n<h4>$1</h4>\n");
     src = src.replace(/\s*===\s*(.+)\s*===/gm,"\n\n<h3>$1</h3>\n");
@@ -174,6 +174,16 @@ Lexer.prototype.lex = function(src) {
    	src = src.replace(/--([^\s](.*?[^\s])?)--/g, '<del>$1</del>');
     // ------ italic /em    //item//
     src = src.replace(/[^(ht|f)tps?:]\/\/([^\s](.*?[^\s])?)\/\//g, ' <i>$1</i>');
+    
+    // ------ linked images (note: first before links)
+    src = src.replace(/^\s*\[\[(.+)?.jpg\] (.+)?\]/gm, '<a href="$2"><img src="$1.jpg"></img></a>');
+    src = src.replace(/^\s*\[\[(.+)?.png\] (.+)?\]/gm, '<a href="$2"><img src="$1.png"></img></a>');
+    src = src.replace(/^\s*\[\[(.+)?.gif\] (.+)?\]/gm, '<a href="$2"><img src="$1.gif"></img></a>');
+    
+    // ------ images       [image.png]
+    src = src.replace(/^\s*\[(.+)?.jpg\]/gm, '<img src="$1.jpg"></img>');
+    src = src.replace(/^\s*\[(.+)?.png\]/gm, '<img src="$1.png"></img>');
+    src = src.replace(/^\s*\[(.+)?.gif\]/gm, '<img src="$1.gif"></img>');
     
     // ------ normal link   [item http://url] 
     src = src.replace(/\[(.*?) MYSFTP(.*?)\]/g, '<a href="MYSFTP$2">$1</a>');
@@ -189,6 +199,7 @@ Lexer.prototype.lex = function(src) {
     src = src.replace(/MYHTTPS/g, 'https:\/\/');
     src = src.replace(/MYHTTP/g, 'http:\/\/');
 
+
     // ------ lazy link
     //src = src.replace(/www\.(.*?[^\s])\.(.*?[^\s(">)])\s+/gm, ' <a href="http://$1.$2">http://$1.$2</a> ');
 
@@ -197,14 +208,7 @@ Lexer.prototype.lex = function(src) {
     // ------ auto link     http://url
     src = src.replace(/[^(href=")]((https|http|ftps|sftp|dict):[^'"\s]+)/gi,"<a href=\"$1\">$1</a>");
       
-    // ------ linked images 
-    src = src.replace(/^\s*\[\[(.+)?.jpg\] (.+)?\]/gm, '<a href="$2"><img src="$1.jpg"></img></a>');
-    src = src.replace(/^\s*\[\[(.+)?.png\] (.+)?\]/gm, '<a href="$2"><img src="$1.png"></img></a>');
-    src = src.replace(/^\s*\[\[(.+)?.gif\] (.+)?\]/gm, '<a href="$2"><img src="$1.gif"></img></a>');
-    // ------ images       [image.png]
-    src = src.replace(/^\s*\[(.+)?.jpg\]/gm, '<img src="$1.jpg"></img>');
-    src = src.replace(/^\s*\[(.+)?.png\]/gm, '<img src="$1.png"></img>');
-    src = src.replace(/^\s*\[(.+)?.gif\]/gm, '<img src="$1.gif"></img>');
+
 
     // ------ lists etc
     src = src.replace(/^%(.+)$/gm, '');
@@ -1327,7 +1331,7 @@ marked.defaults = {
   smartypants: false,
   headerPrefix: '',
   renderer: new Renderer,
-  xhtml: false
+  xhtml: true
 };
 
 /**
@@ -1353,6 +1357,7 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
   define(function() { return marked; });
 } else {
   this.marked = marked;
+  this.EXPORTED_SYMBOLS = ['marked']; /* t2t & adam-p: added easier loading in Firefox */
 }
 
 }).call(function() {

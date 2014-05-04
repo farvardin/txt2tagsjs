@@ -164,6 +164,15 @@ this.makeHtml = function(text) {
     // ------ italic /em    //item//
     text = text.replace(/[^(ht|f)tps?:]\/\/([^\s](.*?[^\s])?)\/\//g, ' <i>$1</i>');
     
+    // ------ linked images (note: first before links)
+    text = text.replace(/^\s*\[\[(.+)?.jpg\] (.+)?\]/gm, '<a href="$2"><img src="$1.jpg"></img></a>');
+    text = text.replace(/^\s*\[\[(.+)?.png\] (.+)?\]/gm, '<a href="$2"><img src="$1.png"></img></a>');
+    text = text.replace(/^\s*\[\[(.+)?.gif\] (.+)?\]/gm, '<a href="$2"><img src="$1.gif"></img></a>');
+    // ------ images       [image.png]
+    text = text.replace(/^\s*\[(.+)?.jpg\]/gm, '<img src="$1.jpg"></img>');
+    text = text.replace(/^\s*\[(.+)?.png\]/gm, '<img src="$1.png"></img>');
+    text = text.replace(/^\s*\[(.+)?.gif\]/gm, '<img src="$1.gif"></img>');
+    
     // ------ normal link   [item http://url] 
     text = text.replace(/\[(.*?) MYSFTP(.*?)\]/g, '<a href="MYSFTP$2">$1</a>');
     text = text.replace(/\[(.*?) MYFTPS(.*?)\]/g, '<a href="MYFTPS$2">$1</a>');
@@ -185,15 +194,7 @@ this.makeHtml = function(text) {
         
     // ------ auto link     http://url
     text = text.replace(/[^(href=")]((https|http|ftps|sftp|dict):[^'"\s]+)/gi,"<a href=\"$1\">$1</a>");
-      
-    // ------ linked images 
-    text = text.replace(/^\s*\[\[(.+)?.jpg\] (.+)?\]/gm, '<a href="$2"><img src="$1.jpg"></img></a>');
-    text = text.replace(/^\s*\[\[(.+)?.png\] (.+)?\]/gm, '<a href="$2"><img src="$1.png"></img></a>');
-    text = text.replace(/^\s*\[\[(.+)?.gif\] (.+)?\]/gm, '<a href="$2"><img src="$1.gif"></img></a>');
-    // ------ images       [image.png]
-    text = text.replace(/^\s*\[(.+)?.jpg\]/gm, '<img src="$1.jpg"></img>');
-    text = text.replace(/^\s*\[(.+)?.png\]/gm, '<img src="$1.png"></img>');
-    text = text.replace(/^\s*\[(.+)?.gif\]/gm, '<img src="$1.gif"></img>');
+    
 
     // ------ lists etc
     text = text.replace(/^%(.+)$/gm, '');

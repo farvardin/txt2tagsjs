@@ -2,9 +2,9 @@
 html,body {
 			margin:10px;
 			padding:0;
-			font-family: Helvetica, Arial, Verdana, sans-serif;
+			font-family: serif;
 			font-size: 90%;
-			background-color: #e0d8d8;
+			background-color: #EDEDE7; /*#e0d8d8;*/
 		}
 		
 textarea {
@@ -13,7 +13,7 @@ textarea {
 
 code {
             background-color: #dedede;
-			font-size: 1.3em;
+			font-size: 1.0em;
 		}
 
 blockquote {
@@ -31,7 +31,7 @@ pre {
    				
 dl {
 padding:5px;
-background-color: #D1C6C6;
+background-color: #ccc;
 }
 
 
@@ -58,13 +58,13 @@ border: 1px solid #999;*/
 		}
 
 .paneHeader a {
-			background-color: #ddd5d5;
+			/*background-color: #ddd5d5;*/
 			color: #555;
 			padding: 0 0.75em;
 			font-size: 90%;
 		}		
 		.paneHeader span {
-			background-color: #ddd5d5;
+			/*background-color: #ddd5d5;*/
 			color: #444;
 			padding: 0 0.75em;
 			font-size: 110%;
