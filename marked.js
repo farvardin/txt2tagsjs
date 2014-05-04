@@ -22,7 +22,6 @@ var block = {
   fences: noop,
   hr: /^( *[-*_]){3,} *(?:\n+|$)/,
   heading: /^ *(#{1,6}) *([^\n]+?) *#* *(?:\n+|$)/,
-  txt2tagsheading: /^\s*==\s*([^\n]+?)\s*==/,
   nptable: noop,
   lheading: /^([^\n]+)\n *(=|-){2,} *(?:\n+|$)/,   //t2t: we should neutralise this//
   blockquote: /^( *>[^\n]+(\n(?!def)[^\n]+)*\n*)+/,
@@ -30,7 +29,7 @@ var block = {
   html: /^ *(?:comment *(?:\n|\s*$)|closed *(?:\n{2,}|\s*$)|closing *(?:\n{2,}|\s*$))/,
   def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +["(]([^\n]+)[")])? *(?:\n+|$)/,
   table: noop,
-  paragraph: /^((?:[^\n]+\n?(?!hr|heading|lheading|blockquote|tag|def|txt2tagsheading))+)\n*/,
+  paragraph: /^((?:[^\n]+\n?(?!hr|heading|lheading|blockquote|tag|def))+)\n*/,
   text: /^[^\n]+/
 };
 
@@ -50,7 +49,6 @@ block.blockquote = replace(block.blockquote)
   ('def', block.def)
   ();
 
-block.txt2tagsheading = /^\s*==\s*([^\n]+?)\s*==/;
   
 block._tag = '(?!(?:'
   + 'h1|h2|h3|h4|h5|a|em|strong|small|s|cite|q|dfn|abbr|data|time|code'
@@ -70,7 +68,6 @@ block.paragraph = replace(block.paragraph)
   ('lheading', block.lheading)
   ('blockquote', block.blockquote)
   ('tag', '<' + block._tag)
-  //('txt2tagsheading', block.txt2tagsheading)
   ('def', block.def)
   ();
 
@@ -163,11 +160,12 @@ Lexer.prototype.lex = function(src) {
     src = src.replace(/(-|_){20,}/g, '<hr/>')
     src = src.replace(/(=){20,}/g, '<hr noshade="noshade" size="5"/>')
     // ------ headings      = h1 =  /   == h2 ==
-    src = src.replace(/\s*=====\s*(.+)\s*=====/gm,"\n<h5>$1</h5>\n");
-    src = src.replace(/\s*====\s*(.+)\s*====/gm,"\n<h4>$1</h4>\n");
-    src = src.replace(/\s*===\s*(.+)\s*===/gm,"\n<h3>$1</h3>\n");
-    src = src.replace(/\s*==\s*(.+)\s*==/gm,"\n<h2>$1</h2>\n");
-    src = src.replace(/^\s*=\s*(.+)\s*=/gm,"\n<h1>$1</h1>\n");
+    // we add 2 extra new lines to be sure it will end 
+    src = src.replace(/\s*=====\s*(.+)\s*=====/gm,"\n\n<h5>$1</h5>\n");
+    src = src.replace(/\s*====\s*(.+)\s*====/gm,"\n\n<h4>$1</h4>\n");
+    src = src.replace(/\s*===\s*(.+)\s*===/gm,"\n\n<h3>$1</h3>\n");
+    src = src.replace(/\s*==\s*(.+)\s*==/gm,"\n\n<h2>$1</h2>\n");
+    src = src.replace(/^\s*=\s*(.+)\s*=/gm,"\n\n<h1>$1</h1>\n");
     // ------ bold / strong **item**
    	src = src.replace(/\*\*([^\s](.*?[^\s])?)\*\*/g, '<b>$1</b>');
     // ------ underline     __item__
