@@ -21,7 +21,7 @@ var block = {
   code: /^( {4}[^\n]+\n*)+/,
   fences: noop,
   hr: /^( *[-*_]){3,} *(?:\n+|$)/,
-  heading: /^ *([#|=]{1,6}) *([^\n]+?) *[#|=]* *(?:\n+|$)/,
+  heading: /^ *(#{1,6}) *([^\n]+?) *#* *(?:\n+|$)/,
   nptable: noop,
   lheading: /^([^\n]+)\n *(=|-){2,} *(?:\n+|$)/,   //t2t: we should neutralise this//
   blockquote: /^( *>[^\n]+(\n(?!def)[^\n]+)*\n*)+/,
@@ -162,8 +162,7 @@ Lexer.prototype.lex = function(src) {
     src = src.replace(/\s*=====\s*(.+)\s*=====/gm,"\n<h5>$1</h5>\n");
     src = src.replace(/\s*====\s*(.+)\s*====/gm,"\n<h4>$1</h4>\n");
     src = src.replace(/\s*===\s*(.+)\s*===/gm,"\n<h3>$1</h3>\n");
-    //src = src.replace(/\s*==\s*(.+)\s*==/gm,"\n<h2>$1</h2>\n");
-    src = src.replace(/\s*==\s*(.+)\s*==/gm,"\n## $1\n");
+    src = src.replace(/\s*==\s*(.+)\s*==/gm,"\n<h2>$1</h2>\n");
     src = src.replace(/^\s*=\s*(.+)\s*=/gm,"\n<h1>$1</h1>\n");
     // ------ bold / strong **item**
    	src = src.replace(/\*\*([^\s](.*?[^\s])?)\*\*/g, '<b>$1</b>');
@@ -211,7 +210,7 @@ Lexer.prototype.lex = function(src) {
     src = src.replace(/\t(.+)$/gm, '<blockquote>$1</blockquote>\n');
     src = src.replace(/\s``` (.+)$/gm, '<pre>$1</pre>');
     src = src.replace(/^\+\s*(.+)$/gm, '1. $1');
-    //src = src.replace(/^:\s(.+)$/gm, '<dl><dt>$1</dt></dl>');/* for definition lists */
+    src = src.replace(/^:\s(.+)$/gm, '<dl><dt>$1</dt></dl>');/* for definition lists */
     //src = src.replace(/<dl>/gm, '</dd><dl>');/* for definition lists */
     //src = src.replace(/^\s*\|(.+)\|(.+)\|$/gm, '<table><tr><td>$1</td><td>$2</td><tr></</table>');
     
@@ -533,7 +532,7 @@ Lexer.prototype.token = function(src, top, bq) {
  */
 
 var inline = {
-  escape: /^\\([\\`*{}\[\]()=#+\-.!_>])/,
+  escape: /^\\([\\`*{}\[\]()#+\-.!_>])/,
   autolink: /^<([^ >]+(@|:\/)[^ >]+)>/,
   url: noop,
   tag: /^<!--[\s\S]*?-->|^<\/?\w+(?:"[^"]*"|'[^']*'|[^'">])*?>/,
@@ -548,7 +547,7 @@ var inline = {
   text: /^[\s\S]+?(?=[\\<!\[_*`]| {2,}\n|$)/
 };
 
-inline._inside = /(?:\[[^\]]*\]|[^\[\]]|\](?=[^\[]*\]))*/;  
+inline._inside = /(?:\[[^\]]*\]|[^\[\]]|\](?=[^\[]*\]))*/;
 inline._href = /\s*<?([\s\S]*?)>?(?:\s+['"]([\s\S]*?)['"])?\s*/;
 
 inline.link = replace(inline.link)
@@ -1162,7 +1161,7 @@ Parser.prototype.tok = function() {
 
 function escape(html, encode) {
   return html
-    .replace(!encode ? /&(?!=#?\w+;)/g : /&/g, '&amp;')
+    .replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
