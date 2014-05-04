@@ -173,8 +173,8 @@ Lexer.prototype.lex = function(src) {
     // ------ strikeout     --item--
    	src = src.replace(/--([^\s](.*?[^\s])?)--/g, '<del>$1</del>');
     // ------ italic /em    //item//
-    src = src.replace(/[^(ht|f)tps?:]\/\/([^\s](.*?[^\s])?)\/\//g, ' <i>$1</i>');
-    
+    //src = src.replace(/[^(ht|f)tps?:]\/\/([^\s](.*?[^\s])?)\/\//g, ' <i>$1</i>');
+    src = src.replace(/\/\/([^\s](.*?[^\s])?)\/\//g, ' <i>$1</i>');  
     // ------ linked images (note: first before links)
     src = src.replace(/^\s*\[\[(.+)?.jpg\] (.+)?\]/gm, '<a href="$2"><img src="$1.jpg"></img></a>');
     src = src.replace(/^\s*\[\[(.+)?.png\] (.+)?\]/gm, '<a href="$2"><img src="$1.png"></img></a>');
