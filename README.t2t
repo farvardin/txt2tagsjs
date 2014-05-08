@@ -106,7 +106,7 @@ This should work correctly:
 
 - headings
 - beautifulers (**bold**, //italic//, --strike-- and __underline__)
-- Pre-Formatted Text, blockquote, code
+- Pre-Formatted Text, code
 - lists
 - comments
 
@@ -119,6 +119,7 @@ This doesn't work at all (yet):
 
 This could be improved (soon):
 
+- in blockquote txt2tags marks are converted to html (yet the html code is not rendered, which is correct at least)
 - Tables (especially in txt2tags.js)
 - definition lists
 - links (some errors when multiple links are on the same line)

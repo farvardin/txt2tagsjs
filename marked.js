@@ -192,6 +192,9 @@ Lexer.prototype.lex = function(src) {
     src = src.replace(/\[(.*?) MYHTTPS(.*?)\]/g, '<a href="MYHTTPS$2">$1</a>');
     src = src.replace(/\[(.*?) MYHTTP(.*?)\]/g, '<a href="MYHTTP$2">$1</a>');
     
+    // local links
+    src = src.replace(/\[(.*?) ([^ ].*?)\]/g, '<a href="$2">$1</a>');
+    
     // revert protected http://
     src = src.replace(/MYSFTP/g, 'sftp:\/\/');
     src = src.replace(/MYFTPS/g, 'ftps:\/\/');
