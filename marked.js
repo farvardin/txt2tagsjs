@@ -204,7 +204,7 @@ Lexer.prototype.lex = function(src) {
 
 
     // ------ lazy link
-    //src = src.replace(/www\.(.*?[^\s])\.(.*?[^\s(">)])\s+/gm, ' <a href="http://$1.$2">http://$1.$2</a> ');
+    src = src.replace(/[^(https|http):\/\/]www\.(.*?[^\s])\.(.*?[^\s(">)])\s+/gm, ' <a href="http://$1.$2">http://$1.$2</a> ');
 
     //src = src.replace(/[^(href=")](www(.*?[^\s])\s+)/gi,"<a href=\"http://www$1\">http://www.$1</a>");
         
@@ -217,7 +217,9 @@ Lexer.prototype.lex = function(src) {
     src = src.replace(/^%(.+)$/gm, '');
     src = src.replace(/\t\t(.+)$/gm, '<blockquote><blockquote>$1</blockquote></blockquote>\n');
     src = src.replace(/\t(.+)$/gm, '<blockquote>$1</blockquote>\n');
+    // ------ code     ``item``  or ^``` item
     src = src.replace(/\s``` (.+)$/gm, '<pre>$1</pre>');
+   	src = src.replace(/``([^\s](.*?[^\s])?)``/g, '<code>$1</code>');
     src = src.replace(/^\+\s*(.+)$/gm, '1. $1');
     src = src.replace(/^:\s(.+)$/gm, '<dl><dt>$1</dt></dl>');/* for definition lists */
     //src = src.replace(/<dl>/gm, '</dd><dl>');/* for definition lists */
@@ -232,7 +234,7 @@ Lexer.prototype.lex = function(src) {
     
     //src = src.replace(/<table>([^*]+?)\|([^*]+?)<\/table>/gm, '<table><tr><td>$1</td><td>$2</td></table>');
 
-        // ------ // end of txt2tags to html
+    // ------ // end of txt2tags to html
 
   return this.token(src, true);
 };
@@ -548,9 +550,9 @@ var inline = {
   link: /^!?\[(inside)\]\(href\)/,
   reflink: /^!?\[(inside)\]\s*\[([^\]]*)\]/,
   nolink: /^!?\[((?:\[[^\]]*\]|[^\[\]])*)\]/,
-  strong: /^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,
-  em: /^\b_((?:__|[\s\S])+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
-  code: /^(`+)\s*([\s\S]*?[^`])\s*\1(?!`)/,
+  strong: /____md_disabled_here__/, // t2t: we disable this
+  em: /____md_disabled_here__/, // t2t: we disable this
+  code: /____md_disabled_here__/,  // t2t: we disable this
   br: /^ {2,}\n(?!\s*$)/,
   del: noop,
   text: /^[\s\S]+?(?=[\\<!\[_*`]| {2,}\n|$)/
@@ -579,8 +581,8 @@ inline.normal = merge({}, inline);
  */
 
 inline.pedantic = merge({}, inline.normal, {
-  strong: /^__(?=\S)([\s\S]*?\S)__(?!_)|^\*\*(?=\S)([\s\S]*?\S)\*\*(?!\*)/,
-  em: /^_(?=\S)([\s\S]*?\S)_(?!_)|^\*(?=\S)([\s\S]*?\S)\*(?!\*)/
+  //strong: /^__(?=\S)([\s\S]*?\S)__(?!_)|^\*\*(?=\S)([\s\S]*?\S)\*\*(?!\*)/,
+  //em: /^_(?=\S)([\s\S]*?\S)_(?!_)|^\*(?=\S)([\s\S]*?\S)\*(?!\*)/
 });
 
 /**
@@ -935,11 +937,11 @@ Renderer.prototype.tablecell = function(content, flags) {
 
 // span level renderer
 Renderer.prototype.strong = function(text) {
-  return '<strong>' + text + '</strong>';
+  return '<b>' + text + '</b>';
 };
 
 Renderer.prototype.em = function(text) {
-  return '<em>' + text + '</em>';
+  return '<i>' + text + '</i>';
 };
 
 Renderer.prototype.codespan = function(text) {

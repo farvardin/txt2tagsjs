@@ -1,19 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Txt2tagsjs</title>
+  <title>Txt2tags parser using javascript and txt2tags.js</title>
   <script src="jquery.js"></script>
   <script type="text/javascript" src="txt2tags.js"></script>
   <link rel="stylesheet" href="-txt2tagsjs.css" />
-  <link rel="stylesheet" href="minimaxing.css" />
+  <link rel="stylesheet" href="style.css" />
+  
+  <link rel="stylesheet/less" href="style.less" />
+  <script src="less.js" type="text/javascript"></script>
+    
   <script>
 	  var converter = new Txt2tags.converter();
 		var truc = $(document).ready(function() {
 			$.get('test.t2t', function(data) {
-			  $("#container").html(converter.makeHtml(data));
+			  $("#container1").html(converter.makeHtml(data));
 			}, 'text');
 		});
-		
+
+		var truc2 = $(document).ready(function() {
+			$.get('README.t2t', function(data){
+			  $("#container2").html(converter.makeHtml(data));
+			}, 'text');
+		});
+
+		var truc2 = $(document).ready(function() {
+			$.get('sidebar.t2t', function(data){
+			  $("#sidebar").html(converter.makeHtml(data));
+			}, 'text');
+		});
+
+// note: replace .html(marked(data)) by .text(marked(data)) so you can see the html source (userful for debugging)
 	
   </script>
 </head>
@@ -22,8 +39,16 @@
 <script>
 </script>
 
+<div id="sidebar"></div>
 
-<div id="container"></div>
+
+
+<div id="main">
+  <div id="container">
+    <div id="container1"></div>
+    <div id="container2"></div>
+  </div>
+</div>
 
 
 </body>

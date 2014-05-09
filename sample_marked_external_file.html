@@ -5,10 +5,9 @@
   <script src="jquery.js"></script>
     <script src="marked.js"></script>
   <link rel="stylesheet" href="-txt2tagsjs.css" />
-  <link rel="stylesheet" href="-minimaxing.css" />
-  <link rel="stylesheet" href="-style2.css" />
+  <link rel="stylesheet" href="style.css" />
   
-  <link rel="stylesheet/less" href="style2.less" />
+  <link rel="stylesheet/less" href="style.less" />
   <script src="less.js" type="text/javascript"></script>
     
   <script>
@@ -26,7 +25,7 @@ marked.setOptions({
 
 		var truc = $(document).ready(function() {
 			$.get('test.t2t', function(data){
-			  $("#container").html(marked(data));
+			  $("#container1").html(marked(data));
 			}, 'text');
 		});
 
@@ -56,8 +55,10 @@ marked.setOptions({
 
 
 <div id="main">
-    <div id="container"></div>
+  <div id="container">
+    <div id="container1"></div>
     <div id="container2"></div>
+  </div>
 </div>
 
 
