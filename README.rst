@@ -5,25 +5,24 @@ txt2tags.js project
 
 
 - txt2tags.js: a txt2tags parser in javascript.
-- markdown2txt2tags.js: an online quicker & dirty converter from markdown to txt2tags
-*(both based on showdown)*
+- markdown2txt2tags.js: an online quicker & dirty converter from markdown to txt2tags. *(both based on showdown)* 
 - marked.js: a fork of marked.js, which can parse and convert txt2tags file to html. 
 It was not "rebranded", so it can be easily integrated into other projects already using marked.
-Note: we have also produced an exported version of showdown.js from txt2tags.js so you can also 
+Note: we have also produced an automatically exported version of showdown.js from txt2tags.js so you can also 
 integrate it into projects initially set up for markdown.
 
-Download `txt2tags.js <http://wiki.txt2tags.org/demos/txt2tagsjs.zip>`_
+**Download `txt2tags.js <http://wiki.txt2tags.org/demos//txt2tagsjs.zip>`_**
 
 
-What's it for?
-==============
+Usage
+=====
 
 Developers can use Txt2tags.js to:
 
 
 - Add in-browser preview to existing Txt2tags apps
 
-Txt2tags.js' output is (almost always) identical to txt2tags.py's, so the server can reproduce exactly the output that the user saw. (See below for exceptions.)
+Txt2tags.js' output is (almost always) identical to txt2tags.py, so the server can reproduce exactly the output that the user saw. (See below for exceptions.)
 
 
 - Add Txt2tags input to programs that don't support it
@@ -67,11 +66,17 @@ Quick Example
   </body>
   </html>
 
-See `sample_inline.html <sample_inline.html>`_ and `sample_external_file.html <sample_external_file.html>`_ for some working examples.
+For some working examples, see:
 
-You can also see `txt2tagsjs-gui.html <txt2tagsjs-gui.html>`_ for a live renderer on txt2tags.
 
-Furthermore, there is `markdown2txt2tags/markdown2txt2tags.html <markdown2txt2tags/markdown2txt2tags.html>`_ which can convert from markdown to txt2tags syntax.
+- inline: `sample_inline.html <sample_inline.html>`_ *(based on showdown)*
+- loading external file: `sample_external_file.html <sample_external_file.html>`_ *(based on showdown)*
+- inline: `sample_marked_inline.html <sample_marked_inline.html>`_ *(based on marked)*
+- loading external file: `sample_marked_external_file.html <sample_marked_external_file.html>`_ *(based on marked)*
+
+You can also look at `txt2tagsjs-gui.html <txt2tagsjs-gui.html>`_ for a live renderer on txt2tags.
+
+Furthermore, there is `markdown2txt2tags/markdown2txt2tags.html <markdown2txt2tags/markdown2txt2tags.html>`_ which can convert from markdown to txt2tags syntax. *(work in progress, it's also based on showdown, a js port of markdown)*
 
 
 Browser Compatibility
@@ -109,26 +114,45 @@ This doesn't work at all (yet):
 - preprocessor (preproc / postproc)
 - 3 lines header 
 
-This could be improved (soon):
+This could be improved (soon, we hope):
 
 - in blockquote txt2tags marks are converted to html (yet the html code is not rendered, which is correct at least)
-- Tables (especially in txt2tags.js)
-- definition lists
+- Tables (especially in txt2tags.js, the marked.js version should work most correctly)
+- definition lists (partial support)
 - links (some errors when multiple links are on the same line)
 - images (centering images)
 - some ordered **sublists** will be turned to unordered lists when you mix both types (txt2tags.js only)
 
-
-Markdown to txt2tags
-====================
-
-A JavaScript converter from Markdown to txt2tags
-
-(Based on Showdown, a js port of markdown) https://github.com/coreyti/showdown
+Basically, the marked.js version should be slightly better.
 
 
-Tests (TODO)
-============
+Related projects
+================
+
+
+- t2t-editor, a txt2tags text editor based on showdown and codemirror: 
+
+ - code: https://github.com/farvardin/t2t-editor/tree/txt2tags (forked from https://github.com/lepture/editor/)
+ - demo: http://wiki.txt2tags.org/demos//t2t-editor/
+
+- what is txt2tags 
+
+ - https://github.com/farvardin/whatistxt2tags (forked from https://github.com/kirkstrobeck/whatismarkdown.com)
+
+- "txt2tags here", a txt2tags converter for rich-form (for thunderbird email client and webmails)
+
+ - code: https://github.com/farvardin/txt2tags-here (forked from https://github.com/adam-p/markdown-here)
+ - download: http://wiki.txt2tags.org/demos//txt2tagsjs/
+
+- Minimalist Online Txt2tags Editor:
+
+ - code: https://github.com/farvardin/MinimalistOnlineTxt2tagsEditor (forked from https://github.com/pioul/MinimalistOnlineMarkdownEditor)
+ - demo: http://wiki.txt2tags.org/demos//mote
+
+
+
+Tests (TODO: not yet)
+=====================
 
 A suite of tests is available which require node.js. Once node is installed, run the following command from the project root to install the development dependencies:
 
@@ -157,26 +181,6 @@ Showdown maintained by Corey Innis https://github.com/coreyti and others
 Marked.js Copyright (c) 2011-2014, Christopher Jeffrey. (MIT Licensed)
 
 txt2tags.js hacks by Eric Forgeot
-
-
-Related projects
-================
-
-
-- t2t-editor, a text editor based on showdown and codemirror: 
-
- - code: https://github.com/farvardin/t2t-editor/tree/txt2tags (forked from https://github.com/lepture/editor/)
- - demo: http://wiki.txt2tags.org/demos/t2t-editor/
-
-- what is txt2tags 
-
- - https://github.com/farvardin/whatistxt2tags (forked from https://github.com/kirkstrobeck/whatismarkdown.com)
-
-- "txt2tags here", a txt2tags converter for rich-form (for thunderbird email client and webmails)
-
- - code: https://github.com/farvardin/txt2tags-here (forked from https://github.com/adam-p/markdown-here)
- - download: http://wiki.txt2tags.org/demos/txt2tagsjs/
-
 
 .. rst code generated by txt2tags 2.6.804 (http://txt2tags.org)
 .. cmdline: txt2tags README.t2t
