@@ -142,7 +142,7 @@ Basically, the marked.js version should be slightly better.
  
 - "txt2tags here", a txt2tags converter for rich-form (for thunderbird email client and webmails)
  - code: https://github.com/farvardin/txt2tags-here (forked from https://github.com/adam-p/markdown-here)
- - download: BASEURLT2T/txt2tagsjs/
+ - download: BASEURLT2T/
 
 - Minimalist Online Txt2tags Editor:
  - code: https://github.com/farvardin/MinimalistOnlineTxt2tagsEditor (forked from https://github.com/pioul/MinimalistOnlineMarkdownEditor)
