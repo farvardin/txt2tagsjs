@@ -1,6 +1,8 @@
 /**
  * marked - a txt2tags (and markdown) parser
  * 
+ * version 2014-05-23
+ * 
  * original project, only for markdown:
  * Copyright (c) 2011-2014, Christopher Jeffrey. (MIT Licensed)
  * https://github.com/chjj/marked
@@ -193,7 +195,7 @@ Lexer.prototype.lex = function(src) {
     src = src.replace(/\[(.*?) MYHTTP(.*?)\]/g, '<a href="MYHTTP$2">$1</a>');
     
     // local links
-    src = src.replace(/\[(.*?) ([^ ].*?)\]/g, '<a href="$2">$1</a>');
+    src = src.replace(/\[(.*) ([^ ].*?)\]/g, '<a href="$2">$1</a>');
     
     // revert protected http://
     src = src.replace(/MYSFTP/g, 'sftp:\/\/');

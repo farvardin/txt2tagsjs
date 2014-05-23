@@ -23,18 +23,39 @@ marked.setOptions({
   //smartypants: false
 });
 
+// from http://www.netlobo.com/url_query_string_javascript.html
+function gup( name )
+{
+  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+  var regexS = "[\\?&]"+name+"=([^&#]*)";
+  var regex = new RegExp( regexS );
+  var results = regex.exec( window.location.href );
+  if( results == null )
+    return 'sample.t2t';
+  else
+    return results[1];
+}
+
+//var mypage = 'test.t2t';
+//var mypage = 'sample.t2t';
+var mypage = gup('page');
+/*if (mypage.length === 0) {
+            mypage = 'sample.t2t';
+        }
+*/
+
 		var truc = $(document).ready(function() {
-			$.get('test.t2t', function(data){
+			$.get(mypage, function(data){
 			  $("#container1").html(marked(data));
 			}, 'text');
 		});
 
-		var truc2 = $(document).ready(function() {
+	/*	var truc2 = $(document).ready(function() {
 			$.get('README.t2t', function(data){
 			  $("#container2").html(marked(data));
 			}, 'text');
 		});
-
+*/
 		var truc2 = $(document).ready(function() {
 			$.get('sidebar.t2t', function(data){
 			  $("#sidebar").html(marked(data));

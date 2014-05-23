@@ -181,7 +181,7 @@ this.makeHtml = function(text) {
     text = text.replace(/\[(.*?) MYHTTP(.*?)\]/g, '<a href="MYHTTP$2">$1</a>');
 
     // local links
-    text = text.replace(/\[(.*?) ([^ ].*?)\]/g, '<a href="$2">$1</a>');
+    text = text.replace(/\[(.*) ([^ ].*?)\]/g, '<a href="$2">$1</a>');
     
     // revert protected http://
     text = text.replace(/MYSFTP/g, 'sftp:\/\/');
