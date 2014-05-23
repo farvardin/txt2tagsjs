@@ -9,7 +9,7 @@
 //   <http://daringfireball.net/projects/markdown/>
 //
 // Redistributable under a BSD-style open source license.
-// See license.txt for more information.
+// See https://github.com/coreyti/showdown/blob/master/license.txt for more information.
 //
 // The full source distribution was at attacklab.net (not available anymore)
 //
@@ -42,11 +42,11 @@
 
 
 //
-// Showdown usage:
+// Txt2tags usage:
 //
-//   var text = "Markdown *rocks*.";
+//   var text = "Markdown Ultra *rocks*.";
 //
-//   var converter = new Showdown.converter();
+//   var converter = new Txt2tags.converter();
 //   var html = converter.makeHtml(text);
 //
 //   alert(html);
@@ -57,7 +57,7 @@
 
 
 //
-// Showdown namespace
+// Txt2tags namespace
 //
 var Txt2tags = { extensions: {} };
 

@@ -1,0 +1,160 @@
+/* style based on http://rmod.lille.inria.fr/coral/index.html */
+/*#f0e6d5;*/
+/*#e5dccb;*/
+/* #cd5b45;*/
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "PT Sans", sans-serif;
+}
+html {
+  background-color: #ebefe8;
+  margin: 0px auto;
+}
+body {
+  background-color: #fcfff9;
+  color: #252018;
+  margin: 12px auto;
+  padding: 12px;
+  /* max-width: 800px;*/
+  /*width: 80%;*/
+}
+a {
+  text-decoration: none;
+}
+a:link,
+a:visited {
+  color: #228822;
+}
+a:hover {
+  color: #55bb55;
+  border-bottom: 1px solid #55bb55;
+}
+h1 {
+  color: #55bb55;
+  line-height: 40px;
+  font-size: 40px;
+  font-weight: normal;
+  text-shadow: 1px 1px 1px white;
+}
+h2,
+h3 {
+  color: #55bb55;
+  font-weight: normal;
+  margin: 20px 0;
+}
+p {
+  margin: 10px 0;
+  font-size: 15px;
+  line-height: 20px;
+}
+ul,
+ol,
+dl {
+  margin: 10px 0;
+  margin-left: 20px;
+  font-size: 15px;
+  line-height: 20px;
+}
+dl dt {
+  margin: 10px 0 0 -20px;
+  font-style: italic;
+}
+dl dd {
+  display: list-item;
+  list-style-type: disc;
+}
+code {
+  font-family: monospace;
+  background-color: #ebefe8;
+  padding: 0.3ex 0.5ex;
+  margin: -0.3ex;
+  border-radius: 0.5ex;
+  -webkit-border-radius: 0.5ex;
+  -moz-border-radius: 0.5ex;
+}
+pre {
+  margin: 10px 0;
+  padding: 0.3em;
+  background-color: #ebefe8;
+  border-radius: 0.3em;
+  -webkit-border-radius: 0.3em;
+  -moz-border-radius: 0.3em;
+}
+pre code {
+  padding: 0 !important;
+  background-color: transparent !important;
+}
+#container {
+  padding: 10px;
+  background-color: #ffffff;
+  border: 1px solid #aaa;
+}
+@media all and (min-width: 800px) {
+  #main {
+    padding: 180px 0 0 280px;
+    margin: 0 auto 0 0;
+    max-width: 40em;
+    min-height: 25em;
+  }
+  #main a {
+    /*border-bottom: 1px solid #c7beaf;*/
+  }
+  #sidebar {
+    position: fixed;
+    top: 180px;
+    left: 20px;
+    width: 200px;
+    padding: 0px 20px 10px 0;
+    border-right: 1px solid #c7beaf;
+    text-align: right;
+  }
+  #sidebar h1,
+  #sidebar h2 {
+    color: #55bb55;
+    text-transform: uppercase;
+    letter-spacing: 0.3ex;
+  }
+  #sidebar h2 {
+    font-size: 13px;
+    line-height: 20px;
+    margin-top: 20px;
+  }
+  #sidebar ul {
+    list-style-type: none !important;
+    margin: 10px 0;
+  }
+  #sidebar li {
+    font-size: 14px;
+    line-height: 20px;
+  }
+  #logo {
+    position: fixed;
+    top: 0px;
+    left: 20px;
+    height: 180px;
+    width: 200px;
+    display: block;
+    background: url(images/coral-logo.png) center no-repeat;
+    border: none;
+    line-height: 400px;
+    text-align: center;
+  }
+  #footer {
+    margin-top: 100px;
+    padding: 10px 0;
+    text-align: center;
+    color: #777777;
+    background-color: #222222;
+  }
+  .notyet {
+    color: #8a8376;
+  }
+  .showcase {
+    margin: 20px 0;
+    text-align: center;
+  }
+  .showcase a {
+    border: none !important;
+  }
+}
