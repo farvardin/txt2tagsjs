@@ -90,6 +90,15 @@ pre code {
   background-color: #ffffff;
   border: 1px solid #aaa;
 }
+
+table tr,td {
+border: 1px solid #999;
+}
+
+table td,th {
+border: 1px solid #999;*/
+}
+
 @media all and (min-width: 800px) {
   #main {
     padding: 180px 0 0 280px;

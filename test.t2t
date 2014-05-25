@@ -1,3 +1,4 @@
+
 = regression tests =
 
 
@@ -9,8 +10,7 @@ You'll need a recent version of [mozilla firefox http://www.mozilla.org/] to be 
 
 
 
-auto link: 
-http://www.mozilla.org/ blabla
+auto link: http://www.mozilla.org/ blabla
 
 
 lazy link: 
@@ -19,6 +19,10 @@ www.mozilla.org blabla
 
 local link: [this is a link to the source of this document test.t2t]
 
+
+several local links (BUG!): [lionwiki-t2t lionwiki-t2t] and [lionwiki-t2t-minimal lionwiki-t2t-minimal]
+
+several local links (possible workaround): [my lionwiki-t2t local:lionwiki-t2t] and [this is lionwiki-t2t-minimal local:lionwiki-t2t-minimal]
 
 You'll need a recent version of [firefox http://www.mozilla.org/] to be able to read this video.
 
@@ -48,6 +52,8 @@ test --- test
 
 == Test markup (bold, underlined etc) ==
 
+
+- should display code and not interpret it (bug): ``**bold**`` and ``//italic//``
 
 - Should not bold or italic: *test*
 - Should not bold or italic: _test_
