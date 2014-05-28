@@ -69,3 +69,14 @@ test --- test
 - should not italic: //truc1 //truc2
 
 - should --strike out--, __underline this__ and //italic this//
+
+
+    blockquote (should interpret **marks**)
+        blockquote lv 2 (should interpret **marks**)
+            blockquote lv 3 (should interpret **marks**)
+
+``` code
+
+this is ``monospace``.
+
+

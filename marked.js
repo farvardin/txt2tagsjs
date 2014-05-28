@@ -26,7 +26,7 @@ var block = {
   heading: /^ *(#{1,6}) *([^\n]+?) *#* *(?:\n+|$)/,
   nptable: noop,
   lheading: /^([^\n]+)\n *(=|-){2,} *(?:\n+|$)/,   //t2t: we should neutralise this//
-  blockquote: /^( *>[^\n]+(\n(?!def)[^\n]+)*\n*)+/,
+  blockquote: /^( *>[^\n]+(\n(?!def)[^\n]+)*\n*)+/,//t2t: we should neutralise this//
   list: /^( *)(bull) [\s\S]+?(?:hr|def|\n{2,}(?! )(?!\1bull )\n*|\s*$)/,
   html: /^ *(?:comment *(?:\n|\s*$)|closed *(?:\n{2,}|\s*$)|closing *(?:\n{2,}|\s*$))/,
   def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +["(]([^\n]+)[")])? *(?:\n+|$)/,
@@ -222,8 +222,11 @@ Lexer.prototype.lex = function(src) {
 
     // ------ lists etc
     src = src.replace(/^%(.+)$/gm, '');
-    src = src.replace(/\t\t(.+)$/gm, '<blockquote><blockquote>$1</blockquote></blockquote>\n');
-    src = src.replace(/\t(.+)$/gm, '<blockquote>$1</blockquote>\n');
+    // ---- blockquote
+    src = src.replace(/^\t\t(.+)$/gm, '<blockquote><blockquote>$1</blockquote></blockquote>\n');
+    src = src.replace(/^ {8}(.+)$/gm, '<blockquote><blockquote>$1</blockquote></blockquote>\n');
+    src = src.replace(/^\t(.+)$/gm, '<blockquote>$1</blockquote>\n');
+    src = src.replace(/^    (.+)$/gm, '<blockquote>$1</blockquote>\n');
     // ------ code     ``item``  or ^``` item
     src = src.replace(/\s``` (.+)$/gm, '<pre>$1</pre>');
     src = src.replace(/``([^\s](.*?[^\s])?)``/g, '<code>$1</code>');
@@ -274,6 +277,7 @@ Lexer.prototype.token = function(src, top, bq) {
     }
 
     // code
+    //t2t: blockquote, was: code/  
     if (cap = this.rules.code.exec(src)) {
       src = src.substring(cap[0].length);
       cap = cap[0].replace(/^ {4}/gm, '');
@@ -285,6 +289,7 @@ Lexer.prototype.token = function(src, top, bq) {
       });
       continue;
     }
+
 
     // fences (gfm)
     if (cap = this.rules.fences.exec(src)) {
