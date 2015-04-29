@@ -44,6 +44,17 @@ body { background-color: @backcolor; color: #252018;
 
  }
 
+blockquote {
+    margin-left: 2em;
+    background-color: (@backcolor - #111);
+    border-left-width: 10px;
+/*background-color: rgba(102, 128, 153, 0.05);*/
+border-top-right-radius: 5px;
+border-bottom-right-radius: 5px;
+padding: 15px 20px;
+border-left: 5px solid rgba(102, 128, 153, 0.075);
+}
+
 a { text-decoration: none;   }
 a:link, a:visited { color: (@headcolor - #333);}
 a:hover { color: @headcolor; border-bottom: 1px solid @headcolor; }
@@ -58,7 +69,7 @@ h4 { color: @facecolor; font-size: 1.5em; font-weight: normal; margin: 20px 0; }
 
 h5 { color: @facecolor; font-size: 1.2em; font-weight: normal; margin: 20px 0; }
 
-p { margin: 10px 0;  }
+p { margin: 10px 0; font-size: 15px; }
 
 ul, ol, dl { margin: 10px 0; margin-left: 20px; font-size: 15px; line-height: 20px; }
 

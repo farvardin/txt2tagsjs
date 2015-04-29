@@ -3,7 +3,8 @@
 // By Jay Salvat - http://markitup.jaysalvat.com/
 // ------------------------------------------------------------------*/
 .markItUp * {
-	margin:0px; padding:0px;
+	margin:0px;
+	padding:0px;
 	outline:none;
 }
 .markItUp a:link,
@@ -13,7 +14,6 @@
 }
 .markItUp  {
 	width:700px;
-	margin:5px 0 5px 0;
 	border:5px solid #F5F5F5;	
 }
 .markItUpContainer  {
