@@ -1,6 +1,8 @@
 //
 // txt2tags.js -- A javascript port of txt2tags syntax
 //
+// version 2014-05-26
+//
 // (based on showdown, a Markdown parser in js)
 //
 // Copyright (c) 2007 John Fraser.
@@ -150,20 +152,23 @@ this.makeHtml = function(text) {
     text = text.replace(/(-|_){20,}/g, '<hr/>')
     text = text.replace(/(=){20,}/g, '<hr noshade="noshade" size="5"/>')
     // ------ headings      = h1 =  /   == h2 ==
+    // we add 2 extra new lines to be sure it will close ending lists
     text = text.replace(/\s*=====\s*(.+)\s*=====/gm,"\n<h5>$1</h5>\n");
     text = text.replace(/\s*====\s*(.+)\s*====/gm,"\n<h4>$1</h4>\n");
     text = text.replace(/\s*===\s*(.+)\s*===/gm,"\n<h3>$1</h3>\n");
     text = text.replace(/\s*==\s*(.+)\s*==/gm,"\n<h2>$1</h2>\n");
     text = text.replace(/^\s*=\s*(.+)\s*=/gm,"\n<h1>$1</h1>\n");
-    // ------ bold / strong **item**
-   	text = text.replace(/\*\*([^\s](.*?[^\s])?)\*\*/g, '<b>$1</b>');
+    // ------ bold / strong **item** (we disable them for ``code``)
+    // by using negative lookahead see http://www.regular-expressions.info/lookaround.html
+    // don't use [^``] which "eat" characters
+   	text = text.replace(/(?!``)?\*\*([^\s](.*?[^\s])?)\*\*(?!``)/g, '<b>$1</b>');
     // ------ underline     __item__
-   	text = text.replace(/__([^\s](.*?[^\s])?)__/g, '<u>$1</u>');
+   	text = text.replace(/(?!``)__([^\s](.*?[^\s])?)__(?!``)/g, ' <u>$1</u> ');
     // ------ strikeout     --item--
-   	text = text.replace(/--([^\s](.*?[^\s])?)--/g, '<del>$1</del>');
+   	text = text.replace(/(?!``)--([^\s](.*?[^\s])?)--(?!``)/g, ' <del>$1</del> ');
     // ------ italic /em    //item//
     //text = text.replace(/[^(ht|f)tps?:]\/\/([^\s](.*?[^\s])?)\/\//g, ' <i>$1</i>');
-	text = text.replace(/\/\/([^\s](.*?[^\s])?)\/\//g, ' <i>$1</i>');      
+	text = text.replace(/(?!``)\/\/([^\s](.*?[^\s])?)\/\/(?!``)/g, ' <i>$1</i> ');  
     // ------ linked images (note: first before links)
     text = text.replace(/^\s*\[\[(.+)?.jpg\] (.+)?\]/gm, '<a href="$2"><img src="$1.jpg"></img></a>');
     text = text.replace(/^\s*\[\[(.+)?.png\] (.+)?\]/gm, '<a href="$2"><img src="$1.png"></img></a>');
@@ -201,19 +206,25 @@ this.makeHtml = function(text) {
 
     // ------ lists etc
     text = text.replace(/^%(.+)$/gm, '');
-    text = text.replace(/\t\t(.+)$/gm, '<blockquote><blockquote>$1</blockquote></blockquote>\n');
-    text = text.replace(/\t(.+)$/gm, '<blockquote>$1</blockquote>\n');
+    // ------ blockquote
+    text = text.replace(/^\t\t(.+)$/gm, '<blockquote><blockquote>$1</blockquote></blockquote>\n');
+    text = text.replace(/^\t(.+)$/gm, '<blockquote>$1</blockquote>\n');
+    // ------ code     ``item``  or ^``` item
     text = text.replace(/\s``` (.+)$/gm, '<pre>$1</pre>');
+    text = text.replace(/``([^\s](.*?[^\s])?)``/g, '<code>$1</code>');
     text = text.replace(/^\+\s*(.+)$/gm, '1. $1');
     text = text.replace(/^:\s(.+)$/gm, '<dl><dt>$1</dt></dl>');/* for definition lists */
     //text = text.replace(/<dl>/gm, '</dd><dl>');/* for definition lists */
-    //text = text.replace(/^\s*\|(.+)\|(.+)\|$/gm, '<table><tr><td>$1</td><td>$2</td><tr></</table>');
-    text = text.replace(/^[ ]*\|\|(.+)\|$/gm, '<table><tr><th>$1</td></th></table>');
-    text = text.replace(/^[ ]*\|\_(.+)\|$/gm, '<table><tr><th>$1</td></th></table>');
-    text = text.replace(/^[ ]*\|\/(.+)\|$/gm, '<table><tr><th>$1</td></th></table>');
-    text = text.replace(/^[ ]*\|(.+)\|$/gm, '<table><tr><td>$1</td></tr></table>');
-    //text = text.replace(/<table>([^*]+?)\|([^*]+?)<\/table>/gm, '<table><tr><td>$1</td><td>$2</td></table>');
-
+    
+	// ------ tableau
+	text = text.replace(/^[ ]*\|_(.+)/gm, '<table><tr><td>$1');
+	text = text.replace(/^[ ]*\|\|(.+)\|$/gm, '<table><thead><td>$1</thead>');
+	text = text.replace(/^[ ]*\|\/(.+)/gm, '<table><tr><th>$1');
+	text = text.replace(/(.+)\|\n^(?![ |])/gm, '$1</table>');
+	text = text.replace(/^[ ]*\|{1}/gm, '<tr><td>');
+	text = text.replace(/\|{1}$/gm, '');
+	//text = text.replace(/^([ ]*\|\/.+)\|{1}/gm, '<th>');
+	text = text.replace(/\|{1}/gm, '<td>');
         // ------ // end of txt2tags to html
 
 	// Clear the global hashes. If we don't clear these, you get conflicts
@@ -1533,7 +1544,3 @@ if (typeof define === 'function' && define.amd) {
         return Txt2tags;
     });
 }
-
-
-
-

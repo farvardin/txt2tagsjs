@@ -12,9 +12,6 @@
 
 <body>
 
-
-
-
 <script type="text/javascript" src="markitup/jquery-1.6.2.min.js"></script>
 <script type="text/javascript" src="markitup/jquery.markitup.js"></script>
 <script type="text/javascript" src="markitup/sets/default/set.js"></script>
@@ -43,10 +40,10 @@ $(document).ready(function()	{
 	$('.toggle').click(function() {
 		if ($("#inputPane.markItUpEditor").length === 1) {
  			$("#inputPane").markItUpRemove();
-			$("span", this).text("get markItUp! back");
+			$("#markItUp").css("background-color","rgb(255,60,0)");
 		} else {
 			$('#inputPane').markItUp(mySettings);
-			$("span", this).text("remove markItUp!");
+			$("#markItUp").css("background-color","rgb(0,230,80)");
 		}
  		return false;
 	});
@@ -54,26 +51,45 @@ $(document).ready(function()	{
 -->
 </script>
 
-
-
-
-
 	<div id="pageHeader">
 		<h1>txt2tags.js</h1>
 		<h4>a javascript port of <a href="http://www.txt2tags.org" title="The txt2tags web site">Txt2tags</a></h4>
 	<br/><br/>
 	</div>
-
-	<div id="leftContainer">
-		<div class="paneHeader">
-			<span>Input
-			<i><a href="#" class="toggle">(click this link to toggle markItUp)</a></i></span>
+	
+	<div id="globalPage">
+		<div id="tabSize"></div>
+		<div id="headerContainer">
+		
+			<div style="display: inline-block;">
+				<button id="changeButton" onclick="switchPlace();" title="Changer de place"><span class="textInButton">Echange</span></button>
+				<button id="synchronizeButton" onclick="switchSync();" title="Scroll synchronisé"><span class="textInButton">Scroll Sync</span></button>
+			</div>
+		
+			<div style="display: inline-block;">
+				<a href="#" class="toggle"><button id="markItUp" title="MarkItUp"><span class="textInButton">MarkItUp</span></button></a>
+				<button id="convertTextButton" title="Convert text now"><span class="textInButton">Convert text</span></button>
+			</div>
+				
+			<div style="display: inline-block;">
+				<select id="paneSetting">
+					<option value="previewPane">Preview</option>
+					<option value="outputPane">HTML Output</option>
+					<option value="syntaxPane">Syntax Guide</option>
+				</select>
+				<select id="convertTextSetting">
+					<option value="delayed">Background</option>
+					<option value="continuous">Every keystroke</option>
+					<option value="manual">Manually</option>
+				</select>
+				<div id="processingTime" title="Last processing time">0 ms</div>
+			</div>
+			
 		</div>
-		<textarea id="inputPane" cols="80" rows="20" class="pane">
-
-
-
-
+		
+		<div id="panesContainer">
+		<div id="leftContainer">
+			<textarea id="inputPane" cols="80" rows="20" class="pane" onscroll="sync(true);">
 
 =  Introduction  =
 
@@ -226,22 +242,17 @@ Use pipes to compose table rows and cells.
 Double pipe at the line beginning starts a heading row.
 Natural spaces specify each cell alignment.
 
-  | cell 1.1  |  cell 1.2   |   cell 1.3 |
-  | cell 2.1  |  cell 2.2   |   cell 2.3 |
-  | cell 3.1  |  cell 3.2   |   cell 3.3 |
+|| heading 1 | heading 2   |  heading 3 |
+ |  cell 2.1 |  cell 2.2   |   cell 2.3 |
+ |  cell 3.1 |  cell 3.2   |   cell 3.3 |
 
-|| heading 1 |  heading 2  |  heading 3 |
- | cell 1.1  |  cell 1.2   |   cell 1.3 |
+|/ heading 1 |  cell 1.2   |   cell 1.3 |
  | cell 2.1  |  cell 2.2   |   cell 2.3 |
+ | cell 3.1  |  cell 3.2   |   cell 3.3 |
 
- |_ heading 1 |  cell 1.1   |   cell 1.2 |
-  | heading 2 |  cell 2.1   |   cell 2.2 |
-  | heading 3 |  cell 3.1   |   cell 3.2 |
-
-|/ heading   |  heading 1  |  heading 2 |
- | heading 1 |  cell 1.1   |   cell 1.2 |
- | heading 2 |  cell 2.1   |   cell 2.2 |
-
+|_ cell 1.1  |  cell 1.2   |   cell 1.3 |
+ | cell 2.1  |  cell 2.2   |   cell 2.3 |
+ | cell 3.1  |  cell 3.2   |   cell 3.3 |
 
 
                 =  Special Entities  =
@@ -277,54 +288,27 @@ You can also specify the date format with the %? flags,
 as ``%%date(%m-%d-%Y)`` which gives: %%date(%m-%d-%Y).
 
 That's all for now.
-
-
-
 </textarea> 
-	</div>
-
-
-
-	<div id="rightContainer">
-		<div class="paneHeader">
-			<select id="paneSetting">
-				<option value="previewPane">Preview</option>
-				<option value="outputPane">HTML Output</option>
-				<option value="syntaxPane">Syntax Guide</option>
-			</select>
-
-		<span id="convertTextControls">
-			<button id="convertTextButton" type="button" title="Convert text now">
-				Convert text
-			</button>
-			
-			<select id="convertTextSetting">
-				<option value="delayed">background</option>
-				<option value="continuous">every keystroke</option>
-				<option value="manual">manually</option>
-			</select>
-		</span>
-		<div id="processingTime" title="Last processing time">0 ms</div>
-
-
 		</div>
-	
-		<textarea id="outputPane" class="pane" cols="80" rows="20" readonly="readonly"></textarea>
-	
-		<div id="previewPane" class="pane"><noscript><h2>You'll need to enable Javascript to use this tool.</h2></noscript></div>
-	
+		
+		<div id="rightContainer">
+		
+			<textarea id="outputPane" class="pane" cols="80" rows="20" readonly="readonly" onscroll="sync(false);"></textarea>
+		
+			<div id="previewPane" class="pane" onscroll="sync(false);"><noscript><h2>You'll need to enable Javascript to use this tool.</h2></noscript></div>
+		
 
-
-
-
-
-
-
-<textarea id="syntaxPane" class="pane" cols="80" rows="20" readonly="readonly">
+	<textarea id="syntaxPane" class="pane" cols="80" rows="20" readonly="readonly" onscroll="sync(false);">
 
 =  Introduction  =
 
 Welcome to the txt2tags sample file.
+
+You can also specify an [explicit link http://duh.org]
+or an [explicit email duh@somewhere.com] with label.
+
+New [test for the txt2tags website http://www.txt2tags.org].
+
 
 Here you have examples and a brief explanation of all
 marks.
@@ -343,7 +327,7 @@ Lines with balanced equal signs = around are titles.
 %TODO link to program site http://txt2tags.org
 
 
-              =  Fonts and Beautifiers  =
+= Fonts and Beautifiers =
 
 We have two sets of fonts:
 
@@ -355,7 +339,7 @@ pre-formatted text.
 We will now enter on a subtitle...
 
 
-                  ==  Beautifiers  ==
+== Beautifiers ==
 
 The text marks for beautifiers are simple, just as you
 type on a plain text email message.
@@ -367,7 +351,7 @@ The **//bold italic//** style is also supported as a
 combination.
 
 
-              ==  Pre-Formatted Text  ==
+==  Pre-Formatted Text  ==
 
 We can put a code sample or other pre-formatted text:
 ```
@@ -377,6 +361,7 @@ We can put a code sample or other pre-formatted text:
 
 And also, it's easy to put a one line pre-formatted
 text:
+
 ``` prompt$ ls /etc
 
 Or use ``pre-formatted`` inside sentences.
@@ -394,6 +379,8 @@ as long as the horizontal line:
 
 You can also specify an [explicit link http://duh.org]
 or an [explicit email duh@somewhere.com] with label.
+
+New [test for the txt2tags website http://www.txt2tags.org].
 
 And remember,
 	A TAB in front of the line does a quotation.
@@ -464,22 +451,17 @@ Use pipes to compose table rows and cells.
 Double pipe at the line beginning starts a heading row.
 Natural spaces specify each cell alignment.
 
-  | cell 1.1  |  cell 1.2   |   cell 1.3 |
-  | cell 2.1  |  cell 2.2   |   cell 2.3 |
-  | cell 3.1  |  cell 3.2   |   cell 3.3 |
+|| heading 1 | heading 2   |  heading 3 |
+ |  cell 2.1 |  cell 2.2   |   cell 2.3 |
+ |  cell 3.1 |  cell 3.2   |   cell 3.3 |
 
-|| heading 1 |  heading 2  |  heading 3 |
- | cell 1.1  |  cell 1.2   |   cell 1.3 |
+|/ heading 1 |  cell 1.2   |   cell 1.3 |
  | cell 2.1  |  cell 2.2   |   cell 2.3 |
+ | cell 3.1  |  cell 3.2   |   cell 3.3 |
 
- |_ heading 1 |  cell 1.1   |   cell 1.2 |
-  | heading 2 |  cell 2.1   |   cell 2.2 |
-  | heading 3 |  cell 3.1   |   cell 3.2 |
-
-|/ heading   |  heading 1  |  heading 2 |
- | heading 1 |  cell 1.1   |   cell 1.2 |
- | heading 2 |  cell 2.1   |   cell 2.2 |
-
+|_ cell 1.1  |  cell 1.2   |   cell 1.3 |
+ | cell 2.1  |  cell 2.2   |   cell 2.3 |
+ | cell 3.1  |  cell 3.2   |   cell 3.3 |
 
 
                 =  Special Entities  =
@@ -491,9 +473,11 @@ Because things were too simple.
 
 The image mark is as simple as it can be: ``[filename]``.
 
+
 [logo_txt2tags.png]  
 
 And with some targets the image is linkable :
+
 
 [[logo_txt2tags.png] http://www.txt2tags.org]  
 
@@ -513,22 +497,18 @@ You can also specify the date format with the %? flags,
 as ``%%date(%m-%d-%Y)`` which gives: %%date(%m-%d-%Y).
 
 That's all for now.
-
 </textarea>
 
-
-
-
-
+		</div>
+	
+		<div id="footer">
+			<span id="byline">
+				<b></b> 
+			</span>
+		
+		</div>
 	</div>
-	
-	<div id="footer">
-		<span id="byline">
-			<b></b> 
-		</span>
-	
 	</div>
-	
 	
 	</body>
 </html>
