@@ -58,8 +58,8 @@ var lastText,lastOutput,lastRoomLeft;
 var convertTextSetting, convertTextButton, paneSetting;
 var inputPane,previewPane,outputPane,syntaxPane;
 var maxDelay = 3000; // longest update pause (in ms)
-
-
+var scrollActivate = false;
+var tab = {"line": 10, "col": 10};
 //
 //	Initialization
 //
@@ -129,6 +129,13 @@ function startGui() {
 	// give the input pane focus
 	inputPane.focus();
 
+	createPreTable(tab["line"],tab["col"]);
+	inputPane.addEventListener('DOMMouseScroll', wheel, false);
+	previewPane.addEventListener('DOMMouseScroll', wheel, false);
+	outputPane.addEventListener('DOMMouseScroll', wheel, false);
+	syntaxPane.addEventListener('DOMMouseScroll', wheel, false);
+	switchSync();
+
 	// start the other panes at the top
 	// (our smart scrolling moved them to the bottom)
 	previewPane.scrollTop = 0;
@@ -195,6 +202,7 @@ function onConvertTextButtonClicked() {
 	lastText = "";
 
 	convertText();
+	updateTime();
 	inputPane.focus();
 }
 
@@ -323,27 +331,185 @@ function getWindowHeight(element) {
 }
 
 function setPaneHeights() {
-    var textarea  = inputPane;
+	var roomLeft;
+	var markItUpHeight = 0;
+	var screen = window.innerWidth > 799;
+	if(document.getElementById('markItUpInputPane')) {
+		markItUpHeight = getElementHeight(document.getElementById('markItUpInputPane'))
+					   - getElementHeight(inputPane);
+	}
+	
 	var footer = document.getElementById("footer");
 
 	var windowHeight = getWindowHeight();
 	var footerHeight = getElementHeight(footer);
-	var textareaTop = getTop(textarea);
-
+	var textareaTop = getTop(inputPane);
 	// figure out how much room the panes should fill
-	var roomLeft = windowHeight - footerHeight - textareaTop;
-
-	if (roomLeft < 0) roomLeft = 0;
-
+	if(screen) {
+		roomLeft = windowHeight - footerHeight - textareaTop;
+	} else {
+		roomLeft = windowHeight*0.35;
+	}
+	if (roomLeft < 300) roomLeft = 300;
 	// if it hasn't changed, return
-	if (roomLeft == lastRoomLeft) {
+	if (roomLeft == lastRoomLeft && !(window.innerWidth > 799)) {
 		return;
 	}
 	lastRoomLeft = roomLeft;
-
+	
 	// resize all panes
 	inputPane.style.height = roomLeft + "px";
-	previewPane.style.height = roomLeft + "px";
-	outputPane.style.height = roomLeft + "px";
-	syntaxPane.style.height = roomLeft + "px";
+	previewPane.style.height = roomLeft + markItUpHeight + "px";
+	outputPane.style.height = roomLeft + markItUpHeight + "px";
+	syntaxPane.style.height = roomLeft + markItUpHeight + "px";
+	if(!(window.innerWidth > 799)) updateTop(true);
+	else updateTop(false);
+}
+
+function updateTop(bool) {
+	if(bool) {
+		document.getElementById('leftContainer').style.top = "0";
+		document.getElementById('rightContainer').style.top = getElementHeight(document.getElementById('leftContainer')) + 20 +"px";
+	} else {
+		document.getElementById('leftContainer').style.top = "0";
+		document.getElementById('rightContainer').style.top = "0";
+	}
+}
+
+function switchPlace() {
+	var scrollPos = document.body.scrollTop;
+	var left = document.getElementById('leftContainer');
+	var right = document.getElementById('rightContainer');
+	left.setAttribute("class", "switch");
+	right.setAttribute("class", "switch");
+	left.setAttribute("id", "rightContainer");
+	right.setAttribute("id", "leftContainer");
+	setPaneHeights();
+	if(!(window.innerWidth > 799)) {
+		right.style.top = "0";
+		left.style.top = getElementHeight(document.getElementById('leftContainer')) + 20 + "px";
+	}
+	
+	setTimeout(function() {
+		left.setAttribute("class","");
+		right.setAttribute("class","");
+		document.body.scrollTop = scrollPos;
+	}, 500);
+}
+
+function change() {
+	temp = valueOfPlace[0];
+	valueOfPlace[0] = valueOfPlace[1];
+	valueOfPlace[1] = temp;
+}
+
+var sync = function(idScroll) {	
+	if(idScroll) {
+		previewPane.scrollTop = Math.round(inputPane.scrollTop / (inputPane.scrollHeight - inputPane.offsetHeight)
+							  * (previewPane.scrollHeight - previewPane.offsetHeight));
+		outputPane.scrollTop = Math.round(inputPane.scrollTop / (inputPane.scrollHeight - inputPane.offsetHeight)
+							  * (outputPane.scrollHeight - outputPane.offsetHeight));
+		syntaxPane.scrollTop = Math.round(inputPane.scrollTop / (inputPane.scrollHeight - inputPane.offsetHeight)
+							  * (syntaxPane.scrollHeight - syntaxPane.offsetHeight));
+	} else {
+		if(paneSetting.value == "previewPane") {
+			inputPane.scrollTop = Math.round(previewPane.scrollTop / (previewPane.scrollHeight - previewPane.offsetHeight)
+								* (inputPane.scrollHeight - inputPane.offsetHeight));
+		} else if(paneSetting.value == "outputPane") {
+			inputPane.scrollTop = Math.round(outputPane.scrollTop / (outputPane.scrollHeight - outputPane.offsetHeight)
+								* (inputPane.scrollHeight - inputPane.offsetHeight));
+		} else if(paneSetting.value == "syntaxPane"){
+			inputPane.scrollTop = Math.round(syntaxPane.scrollTop / (syntaxPane.scrollHeight - syntaxPane.offsetHeight)
+								* (inputPane.scrollHeight - inputPane.offsetHeight));
+		}
+	}
+}
+
+var switchSync = function() {
+	if(scrollActivate) {
+		inputPane.setAttribute("onscroll","");
+		previewPane.setAttribute("onscroll","");
+		outputPane.setAttribute("onscroll","");
+		syntaxPane.setAttribute("onscroll","");
+		document.getElementById('synchronizeButton').style.backgroundColor = "rgb(255,60,0)";
+	} else {
+		inputPane.setAttribute("onscroll","sync(true)");
+		previewPane.setAttribute("onscroll","sync(false)");
+		outputPane.setAttribute("onscroll","sync(false)");
+		syntaxPane.setAttribute("onscroll","sync(false)");
+		document.getElementById('synchronizeButton').style.backgroundColor = "rgb(0,230,80)";
+	}
+	scrollActivate = !scrollActivate;
+}
+
+function wheel(event) {
+	if (event.detail) {
+		this.scrollTop += (event.detail/3)*100;
+		event.preventDefault;
+	}
+	event.returnValue = false;
+}
+
+function updateTime() {
+	time = document.getElementById('processingTime');
+	time.style.transition = '';
+	time.style.backgroundColor = 'white';
+	setTimeout(function() {
+		time.style.transition = 'background-color 300ms';
+		time.style.backgroundColor = 'rgba(255,255,255,0)';
+	}, 200);
+}
+
+var tabSizeHover = function(line, col) {
+	for(var i = 1; i <= tab["line"]; i++) {
+		for(var j = 1; j <= tab["col"]; j++) {
+			if(i <= line && j <= col) {
+				document.getElementById("l" + i + "c" + j).style.backgroundColor = "rgba(200,200,200,0.8)";
+			} else {
+				document.getElementById("l" + i + "c" + j).style.backgroundColor = "rgba(230,230,230,0.8)";
+			}
+		}
+	}
+}
+
+var createTab = function(line, col) {
+	document.getElementById('tabSize').style.display = "none";
+	var scrollPos = inputPane.scrollTop;
+	var pos = Math.max(inputPane.selectionStart, inputPane.selectionEnd);
+	var selection = "\n|";
+	for(var i = 0; i < line; i++) {
+		for(var j = 0; j < col; j++) {
+			if(i == 0 && j == 0) selection += "| item";
+			else selection += " | item";
+		}
+		selection += " |\n";
+	}
+	selection += "\n";
+	
+	var cursPos = pos + selection.length;
+	inputPane.value = inputPane.value.substring(0, pos) + selection + inputPane.value.substring(pos, inputPane.value.length);
+	inputPane.focus();
+	inputPane.setSelectionRange(cursPos, cursPos);
+	inputPane.scrollTop = scrollPos;
+	previewPane.scrollTop = scrollPos;
+	onConvertTextButtonClicked();
+}
+
+function createPreTable(l,c) {
+	var table = '<table><thead onclick="cancelTab()" onmouseover="tabSizeHover(0,0)"><td colspan=' +c+ '>Annuler</thead><tr>';
+	for(var i = 1; i <= l; i++) {
+		table += '<td id="l1c' +i+'" onmouseover="tabSizeHover(1,' +i+ ')" onclick="createTab(1,' +i+ ')">' + i;
+	}
+	for(var i = 2; i <= l; i++) {
+		table += '<tr>';
+		for(var j = 1; j <= c; j++) {
+			table += '<td id="l' +i+ 'c' +j+'" onmouseover="tabSizeHover(' +i+ ',' +j+ ')" onclick="createTab(' +i+ ',' +j+ ')">' + (j == 1 ? i : '');
+		}
+	}
+	table += '</table>';
+	document.getElementById('tabSize').innerHTML = table;
+}
+
+function cancelTab() {
+	document.getElementById('tabSize').style.display = "none";
 }

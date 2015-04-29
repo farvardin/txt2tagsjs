@@ -161,8 +161,12 @@
 						li = $('<li class="markItUpButton markItUpButton'+t+(i)+' '+(button.className||'')+'"><a href="" '+key+' title="'+title+'">'+(button.name||'')+'</a></li>')
 						.bind("contextmenu", function() { // prevent contextmenu on mac and allow ctrl+click
 							return false;
-						}).click(function() {
+						}).click(function(event) {
+							if(button.name == "Table") {
+								$('#tabSize').css({'left': event.pageX, 'top': event.pageY, 'display': 'block'});
+							}
 							return false;
+							
 						}).bind("focusin", function(){
                             $$.focus();
 						}).mouseup(function() {
@@ -244,28 +248,40 @@
 				
 				if (replaceWith !== "") {
 					block = openWith + replaceWith + closeWith;
-				} else if (selection === '' && placeHolder !== '') {
+				} else if (selection == '' && placeHolder !== '') {
 					block = openWith + placeHolder + closeWith;
 				} else {
 					string = string || selection;
-
 					var lines = selection.split(/\r?\n/), blocks = [];
-					
 					for (var l=0; l < lines.length; l++) {
 						line = lines[l];
-						var trailingSpaces;
-						if (trailingSpaces = line.match(/ *$/)) {
-							blocks.push(openWith + line.replace(/ *$/g, '') + closeWith + trailingSpaces);
+						
+						if(openWith != '') {
+							var spacesBeg;
+							var spacesEnd;
+							if(spacesBeg = line.match(/^ */)) {
+								openWith = spacesBeg + openWith;
+								line = line.replace(/^ */g, '');
+							}
+							if(spacesEnd = line.match(/ *$/)) {
+								closeWith += spacesEnd;
+								line = line.replace(/ *$/g, '');
+							}
+							if((openWith == "+ " || openWith == "- ") && selection == "") openWith = "\n\n" + openWith;
+							line = addTag(line, openWith, closeWith);
+							
+							//if(/^\n/.test(line)) openWith = "\n" + openWith;
 						} else {
-							blocks.push(openWith + line + closeWith);
+							line = deleteTag(line);
 						}
+						
+						blocks.push(line);
 					}
-					
 					block = blocks.join("\n");
 				}
 
 				block = openBlockWith + block + closeBlockWith;
-
+				
 				return {	block:block, 
 							openWith:openWith, 
 							replaceWith:replaceWith, 
@@ -277,6 +293,7 @@
 			// define markup to insert
 			function markup(button) {
 				var len, j, n, i;
+				var b = false;
 				hash = clicked = button;
 				get();
 				$.extend(hash, {	line:"", 
@@ -323,13 +340,24 @@
 					len -= fixIeBug(string.block);
 				} else {
 					string = build(selection);
-					start = caretPosition + string.block.length ;
-					len = 0;
+					if(string.openWith == '') {
+						start = caretPosition;
+						len = string.block.length;
+					} else {
+						b = sameTag(string.openWith, textarea, selection);
+						if(b) {
+							start = caretPosition - string.openWith.length;
+						} else {
+							start = caretPosition + string.openWith.length + (string.openWith.match(/=+/) ? 1 : 0);
+						}
+						len = selection.length - (selection.match(/^ /) ? 1 : 0) - (selection.match(/ $/) ? 1 : 0);
+					}
 					start -= fixIeBug(string.block);
+					
 				}
+				
 				if ((selection === '' && string.replaceWith === '')) {
 					caretOffset += fixOperaBug(string.block);
-					
 					start = caretPosition + string.openWith.length;
 					len = string.block.length - string.openWith.length - string.closeWith.length;
 
@@ -337,15 +365,16 @@
 					caretOffset -= fixOperaBug($$.val().substring(0, caretPosition));
 				}
 				$.extend(hash, { caretPosition:caretPosition, scrollPosition:scrollPosition } );
-
-				if (string.block !== selection && abort === false) {
+				
+				if (string.block !== selection && abort === false && !b) {
 					insert(string.block);
-					set(start, len);
+					set(start,len);
 				} else {
+					set(start,len);			// à verif
 					caretOffset = -1;
 				}
 				get();
-
+				
 				$.extend(hash, { line:'', selection:selection });
 
 				// callbacks after insertion
@@ -359,7 +388,8 @@
 				if (previewWindow && options.previewAutoRefresh) {
 					refreshPreview(); 
 				}
-																									
+				convertText();
+				
 				// reinit keyevent
 				shiftKey = altKey = ctrlKey = abort = false;
 			}
@@ -377,6 +407,94 @@
 					return string.length - string.replace(/\r*/g, '').length;
 				}
 				return 0;
+			}
+			
+			function addTag(line, open, close) {
+				if(/^ *=/.test(open)) {
+					//line = line.replace(/(?:\s*={1,5}\s*)(.+)(?:\s*={1,5}\s*)/g, '$1');
+					line = line.replace(/(={1,5}\s*)|(\s*={1,5})/g, '');
+					line = "\n" + open + line + close + "\n";
+				} else if(/^ *\*\*/.test(open)) {
+					line = line.replace(/(?!``)?(\*\*)(?!``)/g, '');
+					line = open + line + close;
+				} else if(/^ *\/\//.test(open)) {
+					line = line.replace(/(?!``)?(\/\/)(?!``)/g, '');
+					line = open + line + close;
+				} else if(/^ *__/.test(open)) {
+					line = line.replace(/(?!``)?(__)(?!``)/g, '');
+					line = open + line + close;
+				} else if(/^ *--/.test(open)) {
+					line = line.replace(/(?!``)?(--)(?!``)/g, '');
+					line = open + line + close;
+				} else if(/^ *``/.test(open)) {
+					line = line.replace(/(``)/g, '');
+					line = open + line + close;
+				} else if(/^ *\t/.test(open)) {
+					line = "\n" + open + line + close;
+				} else if(/^ *""/.test(open)) {
+					line = line.replace(/(?!``)?("")(?!``)/g, '');
+					line = open + line + close;
+				} else if(/^\s*\-/.test(open) || /^\s*\+/.test(open)) {
+					line = open + line + close;
+				}
+				return line;
+			}
+			
+			function deleteTag(line) {
+				return line.replace(/\*{2}|\/{2}|_{2}|-{2}|=/g, '');
+			}
+			
+			function sameTag(open, textarea, sel) {
+				if(/^ *=====/.test(open) && '===== ' == textarea.value.substring(caretPosition -6, caretPosition)
+					&& ' =====' == textarea.value.substring(caretPosition + sel.length, caretPosition + sel.length +6)
+				) {
+					textarea.value = textarea.value.substring(0, caretPosition -6)
+								   + textarea.value.substring(caretPosition, caretPosition + sel.length)
+								   + textarea.value.substring(caretPosition + sel.length +6, textarea.length);
+					return true;
+				} else if(/^ *====/.test(open) && '==== ' == textarea.value.substring(caretPosition -5, caretPosition)
+					&& ' ====' == textarea.value.substring(caretPosition + sel.length, caretPosition + sel.length +5)
+				) {
+					textarea.value = textarea.value.substring(0, caretPosition -5)
+								   + textarea.value.substring(caretPosition, caretPosition + sel.length)
+								   + textarea.value.substring(caretPosition + sel.length +5, textarea.length);
+					return true;
+				} else if(/^ *===/.test(open) && '=== ' == textarea.value.substring(caretPosition -4, caretPosition)
+					&& ' ===' == textarea.value.substring(caretPosition + sel.length, caretPosition + sel.length +4)
+				) {
+					textarea.value = textarea.value.substring(0, caretPosition -4)
+								   + textarea.value.substring(caretPosition, caretPosition + sel.length)
+								   + textarea.value.substring(caretPosition + sel.length +4, textarea.length);
+					return true;
+				} else if(/^ *==/.test(open) && '== ' == textarea.value.substring(caretPosition -3, caretPosition)
+					&& ' ==' == textarea.value.substring(caretPosition + sel.length, caretPosition + sel.length +3)
+				) {
+					textarea.value = textarea.value.substring(0, caretPosition -3)
+								   + textarea.value.substring(caretPosition, caretPosition + sel.length)
+								   + textarea.value.substring(caretPosition + sel.length +3, textarea.length);
+					return true;
+				} else if(/\*\*/.test(open) && '**' == textarea.value.substring(caretPosition -2, caretPosition)
+					&& '**' == textarea.value.substring(caretPosition + sel.length, caretPosition + sel.length +2)
+					|| /^ *\/\//.test(open) && '//' == textarea.value.substring(caretPosition -2, caretPosition)
+					&& '//' == textarea.value.substring(caretPosition + sel.length, caretPosition + sel.length +2)
+					|| /^ *__/.test(open) && '__' == textarea.value.substring(caretPosition -2, caretPosition)
+					&& '__' == textarea.value.substring(caretPosition + sel.length, caretPosition + sel.length +2)
+					|| /^ *--/.test(open) && '--' == textarea.value.substring(caretPosition -2, caretPosition)
+					&& '--' == textarea.value.substring(caretPosition + sel.length, caretPosition + sel.length +2)
+					|| /^ *``/.test(open) && '``' == textarea.value.substring(caretPosition -2, caretPosition)
+					&& '``' == textarea.value.substring(caretPosition + sel.length, caretPosition + sel.length +2)
+					|| /^ *""/.test(open) && '""' == textarea.value.substring(caretPosition -2, caretPosition)
+					&& '""' == textarea.value.substring(caretPosition + sel.length, caretPosition + sel.length +2)
+					|| /^ *""/.test(open) && '""' == textarea.value.substring(caretPosition -2, caretPosition)
+					&& '""' == textarea.value.substring(caretPosition + sel.length, caretPosition + sel.length +2)
+					|| /^ *=/.test(open) && '= ' == textarea.value.substring(caretPosition -2, caretPosition)
+					&& ' =' == textarea.value.substring(caretPosition + sel.length, caretPosition + sel.length +2)
+				) {
+					textarea.value = textarea.value.substring(0, caretPosition -2)
+								   + textarea.value.substring(caretPosition, caretPosition + sel.length)
+								   + textarea.value.substring(caretPosition + sel.length +2, textarea.length);
+					return true;
+				} else return false;
 			}
 				
 			// add markup

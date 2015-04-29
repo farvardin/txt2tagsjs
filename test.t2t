@@ -71,12 +71,80 @@ test --- test
 - should --strike out--, __underline this__ and //italic this//
 
 
-    blockquote (should interpret **marks**)
-        blockquote lv 2 (should interpret **marks**)
-            blockquote lv 3 (should interpret **marks**)
+    blockquote (4 spaces) (should interpret **marks**) : should not work
+        blockquote lv 2 (only spaces) (should interpret **marks**) : should not work
+            blockquote lv 3 (only spaces) (should interpret **marks**) : should not work
+
+	blockquote (1 tab)  (should interpret **marks**)
+		blockquote (2 tab)  (should interpret **marks**)
+    
+end blockquote
+
+	new blockquote (1 tab)
 
 ``` code
 
 this is ``monospace``.
+
+
+It reads a **text** file with **minimal** markup such as ``**bold**`` **and** ``//italic//``. Its python implementation can convert to several formats such as //html, docbook, LaTeX, RTF, Man page, Creole, Wikipedia / MediaWiki, PmWiki, DokuWiki, MoinMoin, AsciiDoc...//
+
+
+``**``bold``**``
+
+
+
+
+== lists ==
+
+===  Plain List  ===
+
+The dash is the default list identifier. For sublists,
+just add **spaces** at the beginning of the line. More
+spaces, more sublists.
+
+- Earth
+  - America
+    - South America
+      - Brazil
+        - How deep can I go?
+  - Europe
+    - Lots of countries
+- Mars
+  - Who knows?
+
+
+The list ends with **two** consecutive blank lines.
+
+
+===  Numbered List  ===
+
+The same rules as the plain list, just a different
+identifier (plus).
+
++ one (olist)
++ two (olist)
++ three (olist)
+  - mixed lists! (ulist)
+  - what a mess (ulist)
+    + counting again (olist)
+    + ... (olist)
++ four (olist)
+- new list (ulist)
+ - new list (ulist)
+ 
+
+
+== others ==
+
+ poetry
+ begins with a single space
+ 
+ 
+== macros ==
+
+%%date
+
+this is %%date
 
 
