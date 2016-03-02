@@ -245,6 +245,22 @@ a:focus {
 			   if the user has javascript disabled */
 			height: 400px;
 		}
+
+		#previewPane {
+			background-color: #f3eeee;
+		}
+		
+		#outputPane {
+			background-color: #6c6666;
+			color: #fff;
+			display: none;
+		}
+		
+		#syntaxPane {
+			background-color: #e6dede;
+			background-color: #f7ecec;
+			display: none;
+		}
 		
 		div.pane {
 			overflow: auto;

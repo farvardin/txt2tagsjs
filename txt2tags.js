@@ -1,7 +1,7 @@
 //
 // txt2tags.js -- A javascript port of txt2tags syntax
 //
-// version 2014-05-26
+// version 2015-07-21
 //
 // (based on showdown, a Markdown parser in js)
 //
@@ -46,7 +46,7 @@
 //
 // Txt2tags usage:
 //
-//   var text = "Markdown Ultra *rocks*.";
+//   var text = "Markdown Ultra (a.k.a. txt2tags) *rocks*.";
 //
 //   var converter = new Txt2tags.converter();
 //   var html = converter.makeHtml(text);
@@ -163,20 +163,20 @@ this.makeHtml = function(text) {
     // don't use [^``] which "eat" characters
    	text = text.replace(/(?!``)?\*\*([^\s](.*?[^\s])?)\*\*(?!``)/g, '<b>$1</b>');
     // ------ underline     __item__
-   	text = text.replace(/(?!``)__([^\s](.*?[^\s])?)__(?!``)/g, ' <u>$1</u> ');
+   	text = text.replace(/(?!``)__([^\s](.*?[^\s])?)__(?!``)/g, '<u>$1</u>');
     // ------ strikeout     --item--
-   	text = text.replace(/(?!``)--([^\s](.*?[^\s])?)--(?!``)/g, ' <del>$1</del> ');
+   	text = text.replace(/(?!``)--([^\s](.*?[^\s])?)--(?!``)/g, '<del>$1</del>');
     // ------ italic /em    //item//
     //text = text.replace(/[^(ht|f)tps?:]\/\/([^\s](.*?[^\s])?)\/\//g, ' <i>$1</i>');
-	text = text.replace(/(?!``)\/\/([^\s](.*?[^\s])?)\/\/(?!``)/g, ' <i>$1</i> ');  
+	text = text.replace(/(?!``)\/\/([^\s](.*?[^\s])?)\/\/(?!``)/g, '<i>$1</i>');  
     // ------ linked images (note: first before links)
-    text = text.replace(/^\s*\[\[(.+)?.jpg\] (.+)?\]/gm, '<a href="$2"><img src="$1.jpg"></img></a>');
-    text = text.replace(/^\s*\[\[(.+)?.png\] (.+)?\]/gm, '<a href="$2"><img src="$1.png"></img></a>');
-    text = text.replace(/^\s*\[\[(.+)?.gif\] (.+)?\]/gm, '<a href="$2"><img src="$1.gif"></img></a>');
+    text = text.replace(/\[\[(.+?).jpg\] (.+)?\]/gm, '<a href="$2"><img src="$1.jpg"></img></a>');
+    text = text.replace(/\[\[(.+?).png\] (.+)?\]/gm, '<a href="$2"><img src="$1.png"></img></a>');
+    text = text.replace(/\[\[(.+?).gif\] (.+)?\]/gm, '<a href="$2"><img src="$1.gif"></img></a>');
     // ------ images       [image.png]
-    text = text.replace(/^\s*\[(.+)?.jpg\]/gm, '<img src="$1.jpg"></img>');
-    text = text.replace(/^\s*\[(.+)?.png\]/gm, '<img src="$1.png"></img>');
-    text = text.replace(/^\s*\[(.+)?.gif\]/gm, '<img src="$1.gif"></img>');
+    text = text.replace(/\[(.+?).jpg\]/gm, '<img src="$1.jpg"></img>');
+    text = text.replace(/\[(.+?).png\]/gm, '<img src="$1.png"></img>');
+    text = text.replace(/\[(.+?).gif\]/gm, '<img src="$1.gif"></img>');
     
     // ------ normal link   [item http://url] 
     text = text.replace(/\[(.*?) MYSFTP(.*?)\]/g, '<a href="MYSFTP$2">$1</a>');
@@ -185,7 +185,15 @@ this.makeHtml = function(text) {
     text = text.replace(/\[(.*?) MYHTTPS(.*?)\]/g, '<a href="MYHTTPS$2">$1</a>');
     text = text.replace(/\[(.*?) MYHTTP(.*?)\]/g, '<a href="MYHTTP$2">$1</a>');
 
+    // lionwiki links [[desc | local.link]]
+    text = text.replace(/\[\[(.*)[ ]*\|[ ]*(.*?)\]\]/g, '<a href="index.php?page=$2">$1</a>');
+    
+    text = text.replace(/\[\[(.*?)\]\]/g, '<a href="index.php?page=$1">$1</a>');
+    
     // local links
+    //bug: text = text.replace(/\[(.*?) ([^ ].*?)\]/g, '<a href="$2">$1</a>');
+    // workaround: use [description local:link]
+    text = text.replace(/\[(.*?) local:([^ ].*?)\]/g, '<a href="$2">$1</a>');
     text = text.replace(/\[(.*) ([^ ].*?)\]/g, '<a href="$2">$1</a>');
     
     // revert protected http://
@@ -201,7 +209,7 @@ this.makeHtml = function(text) {
     //text = text.replace(/[^(href=")](www(.*?[^\s])\s+)/gi,"<a href=\"http://www$1\">http://www.$1</a>");
         
     // ------ auto link     http://url
-    text = text.replace(/[^(href=")]((https|http|ftps|sftp|dict):[^'"\s]+)/gi,"<a href=\"$1\">$1</a>");
+    text = text.replace(/[^(href=")]((https|http|ftps|sftp|dict):\/\/[^'"\s]+)/gi," <a href=\"$1\">$1</a>");
     
 
     // ------ lists etc
@@ -216,13 +224,13 @@ this.makeHtml = function(text) {
     text = text.replace(/^:\s(.+)$/gm, '<dl><dt>$1</dt></dl>');/* for definition lists */
     //text = text.replace(/<dl>/gm, '</dd><dl>');/* for definition lists */
     
-	// ------ tableau
+	// ------ tables
 	text = text.replace(/^[ ]*\|_(.+)/gm, '<table><tr><td>$1');
-	text = text.replace(/^[ ]*\|\|(.+)\|$/gm, '<table><thead><td>$1</thead>');
+	text = text.replace(/^[ ]*\|\|(.+)\|[ ]*$/gm, '<table><thead><td>$1</thead>');
 	text = text.replace(/^[ ]*\|\/(.+)/gm, '<table><tr><th>$1');
-	text = text.replace(/(.+)\|\n^(?![ |])/gm, '$1</table>');
+	text = text.replace(/(.+)\|[ ]*\n^(?![ |])/gm, '$1</table>');
 	text = text.replace(/^[ ]*\|{1}/gm, '<tr><td>');
-	text = text.replace(/\|{1}$/gm, '');
+	text = text.replace(/\|{1}[ ]*$/gm, '');
 	//text = text.replace(/^([ ]*\|\/.+)\|{1}/gm, '<th>');
 	text = text.replace(/\|{1}/gm, '<td>');
         // ------ // end of txt2tags to html

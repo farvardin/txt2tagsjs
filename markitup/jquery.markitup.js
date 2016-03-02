@@ -61,14 +61,23 @@
 		}
 
 		return this.each(function() {
-			var $$, textarea, levels, scrollPosition, caretPosition, caretOffset,
-				clicked, hash, header, footer, previewWindow, template, iFrame, abort;
+			var $$, textarea, levels, scrollPosition, caretPosition, caretOffset, clicked,
+				hash, header, footer, previewWindow, template, iFrame, abort, tabSize, defaultUploadPath;
+
 			$$ = $(this);
 			textarea = this;
 			levels = [];
 			abort = false;
 			scrollPosition = caretPosition = 0;
 			caretOffset = -1;
+			if(typeof(tabMarkItUp) != "undefined") {
+				tabSize = {"line": (tabMarkItUp["line"] > 0 ? tabMarkItUp["line"] : 10),
+							"col": (tabMarkItUp["col"] > 0 ? tabMarkItUp["col"] : 10)};
+			} else {
+				tabSize = {"line": 10, "col": 10};
+			}
+			
+			defaultUploadPath = "./var/upload/";
 
 			options.previewParserPath = localize(options.previewParserPath);
 			options.previewTemplatePath = localize(options.previewTemplatePath);
@@ -83,6 +92,14 @@
 
 			// init and build editor
 			function init() {
+				blacklist = [".php", ".phtml", ".php3", ".php4", ".js", ".shtml", ".pl" ,".py", ".asp", ".jsp", ".sh", ".cgi", ".htaccess"];
+				regexBlacklist = '';
+				for(var i = 0; i < blacklist.length -2; i++) {
+					regexBlacklist += blacklist[i] + '$|';
+				}
+				regexBlacklist += blacklist[blacklist.length -1] + '$';
+				regexBlacklist = new RegExp(regexBlacklist);
+				
 				id = ''; nameSpace = '';
 				if (options.id) {
 					id = 'id="'+options.id+'"';
@@ -124,9 +141,15 @@
 					footer.append(resizeHandle);
 				}
 
+				// add the div in the body to create table
+				$("<div></div>").attr("id", "tabSize").appendTo("body");
+				createPreTable(tabSize["line"],tabSize["col"]);
+
+				$("body").append($("<div></div>").attr("id", "blackScreen"));
+
 				// listen key events
 				$$.keydown(keyPressed).keyup(keyPressed);
-				
+
 				// bind an event to catch external calls
 				$$.bind("insertion", function(e, settings) {
 					if (settings.target !== false) {
@@ -164,10 +187,52 @@
 						}).click(function(event) {
 							if(button.name == "Table") {
 								$('#tabSize').css({'left': event.pageX, 'top': event.pageY, 'display': 'block'});
+							} else if(button.name == "Picture") {
+								appendStructure(true);
+								$("#pictureForm").append($("<button type='button' id='valideImg' class='button_txt2tags_false'>Valider</button>").click(function() {
+									var path = $('#nameImg').html();
+									if(regexBlacklist.test(path)) {
+										alert("File format not accepted on this website.");
+									} else if(path == "") {
+										alert("No file chosen.");
+									} else if(/.png$|.jpg$|.gif$/.test(path)) {
+										img = build(path);
+										var start = caretPosition + defaultUploadPath.length + path.length + img.closeWith.length;
+										insert(defaultUploadPath + path);
+										set(start,0);
+										get();
+										$("#blackScreen").css("display", "none");
+										$('#pictureForm').replaceWith();
+										convertText();
+									} else {
+										alert("The file is not a picture.");
+									}
+								}));
+								closeStructure();
+							} else if(button.name == "Document") {
+								appendStructure(false);
+								$("#pictureForm").append($("<button type='button' id='valideImg' class='button_txt2tags_false'>OK</button>").click(function() {
+									var path = $('#nameImg').html();
+									if(regexBlacklist.test(path)) {
+										alert("Le format de fichier n'est pas accepté par le site.");
+									} else if(/.png$|.jpg$|.gif$/.test(path)) {
+										alert("File must be a document and not a picture.");
+									} else if (path == "") {
+										alert("No file chosen");
+									} else {
+										var placeHolderPath = path.split("/");
+										insert(placeHolderPath[placeHolderPath.length -1] + " " + defaultUploadPath + path);
+										set(caretPosition,placeHolderPath[placeHolderPath.length -1].length);
+										get();
+										$("#blackScreen").css("display", "none");
+										$('#pictureForm').replaceWith();
+										convertText();
+									}
+								}));
+								closeStructure();
 							}
 							return false;
-							
-						}).bind("focusin", function(){
+						}).bind("focusin", function() {
                             $$.focus();
 						}).mouseup(function() {
 							if (button.call) {
@@ -193,6 +258,37 @@
 				}); 
 				levels.pop();
 				return ul;
+			}
+			
+			function appendStructure(img) {
+				$("#blackScreen").append($("<form></form>").attr("id", "pictureForm"));
+				$("#pictureForm").append($("<div></div>").attr("id", "iframeUpload"));
+				$("#iframeUpload").append($("<iframe></iframe>").attr("src", "index.php?page=main&template=templates/upload.html"));
+				$("#iframeUpload").append($("<div></div>").attr("id", "reload").click(function() {
+					$("#iframeUpload iframe").attr("src", "index.php?page=main&template=templates/upload.html");
+				}));
+				
+				$("#pictureForm").append($("<div></div>").attr("id", "nameImg").bind('DOMSubtreeModified',function() {
+					var regexImg;
+					if(img) regexImg = !/.png$|.jpg$|.gif$/.test($("#nameImg").html());
+					else regexImg = /.png$|.jpg$|.gif$/.test($("#nameImg").html())
+					if(regexBlacklist.test($("#nameImg").html()) || regexImg) {
+						$("#nameImg").attr("class", "refuse");
+						$("#valideImg").attr("class", "button_txt2tags_false");
+					} else {
+						$("#nameImg").attr("class", "valide");
+						$("#valideImg").attr("class", "button_txt2tags_true");
+					}
+				}));
+			}
+			
+			function closeStructure() {
+				$("#pictureForm").append($("<button type='button' class='button_txt2tags_false'>Close</button>").click(function() {
+					$("#blackScreen").css("display", "none");
+					$('#pictureForm').replaceWith();
+					get();
+				}));
+				$('#blackScreen').css('display','block');
 			}
 
 			// markItUp! markups
@@ -268,9 +364,12 @@
 								line = line.replace(/ *$/g, '');
 							}
 							if((openWith == "+ " || openWith == "- ") && selection == "") openWith = "\n\n" + openWith;
+							if(openWith == "\t") openWith = "\n" + openWith;
+							if(/^ *=/.test(open)) {
+								openWith = "\n" + openWith;
+								closeWith += "\n";
+							}
 							line = addTag(line, openWith, closeWith);
-							
-							//if(/^\n/.test(line)) openWith = "\n" + openWith;
 						} else {
 							line = deleteTag(line);
 						}
@@ -279,7 +378,7 @@
 					}
 					block = blocks.join("\n");
 				}
-
+				
 				block = openBlockWith + block + closeBlockWith;
 				
 				return {	block:block, 
@@ -348,19 +447,18 @@
 						if(b) {
 							start = caretPosition - string.openWith.length;
 						} else {
-							start = caretPosition + string.openWith.length + (string.openWith.match(/=+/) ? 1 : 0);
+							start = caretPosition + string.openWith.length;
 						}
 						len = selection.length - (selection.match(/^ /) ? 1 : 0) - (selection.match(/ $/) ? 1 : 0);
 					}
 					start -= fixIeBug(string.block);
-					
 				}
 				
 				if ((selection === '' && string.replaceWith === '')) {
 					caretOffset += fixOperaBug(string.block);
 					start = caretPosition + string.openWith.length;
 					len = string.block.length - string.openWith.length - string.closeWith.length;
-
+					
 					caretOffset = $$.val().substring(caretPosition,  $$.val().length).length;
 					caretOffset -= fixOperaBug($$.val().substring(0, caretPosition));
 				}
@@ -374,7 +472,6 @@
 					caretOffset = -1;
 				}
 				get();
-				
 				$.extend(hash, { line:'', selection:selection });
 
 				// callbacks after insertion
@@ -411,37 +508,26 @@
 			
 			function addTag(line, open, close) {
 				if(/^ *=/.test(open)) {
-					//line = line.replace(/(?:\s*={1,5}\s*)(.+)(?:\s*={1,5}\s*)/g, '$1');
 					line = line.replace(/(={1,5}\s*)|(\s*={1,5})/g, '');
-					line = "\n" + open + line + close + "\n";
 				} else if(/^ *\*\*/.test(open)) {
 					line = line.replace(/(?!``)?(\*\*)(?!``)/g, '');
-					line = open + line + close;
 				} else if(/^ *\/\//.test(open)) {
 					line = line.replace(/(?!``)?(\/\/)(?!``)/g, '');
-					line = open + line + close;
 				} else if(/^ *__/.test(open)) {
 					line = line.replace(/(?!``)?(__)(?!``)/g, '');
-					line = open + line + close;
 				} else if(/^ *--/.test(open)) {
 					line = line.replace(/(?!``)?(--)(?!``)/g, '');
-					line = open + line + close;
 				} else if(/^ *``/.test(open)) {
 					line = line.replace(/(``)/g, '');
-					line = open + line + close;
-				} else if(/^ *\t/.test(open)) {
-					line = "\n" + open + line + close;
 				} else if(/^ *""/.test(open)) {
 					line = line.replace(/(?!``)?("")(?!``)/g, '');
-					line = open + line + close;
-				} else if(/^\s*\-/.test(open) || /^\s*\+/.test(open)) {
-					line = open + line + close;
 				}
+				line = open + line + close;
 				return line;
 			}
 			
 			function deleteTag(line) {
-				return line.replace(/\*{2}|\/{2}|_{2}|-{2}|=/g, '');
+				return line.replace(/\*{2}|\/{2}|_{2}|-{2}|^(={1,5})\s|\s(={1,5})$|^\+\s|^\-\s/g, '');
 			}
 			
 			function sameTag(open, textarea, sel) {
@@ -683,6 +769,80 @@
 					}
 				}
 			}
+			
+			function createPreTable(l,c) {
+				$('#tabSize').html('<table><thead></thead><tbody></tbody></table>');
+				
+				// thead
+				$('#tabSize thead').append('<td colspan=' +c+ '>Annuler')
+				.click(function() {
+					$('#tabSize').css('display', 'none');
+				}).mouseover(function() {
+					for(var i = 1; i <= tabSize["line"]; i++) {
+						for(var j = 1; j <= tabSize["line"]; j++) {
+							$('#l' + i + 'c' + j).css('background-color', 'rgba(230,230,230,0.8)');
+						}
+					}
+				});
+
+				// tbody first line
+				$('#tabSize tbody').append('<tr>');
+				for(var j = 1; j <= c; j++) {
+					$('#tabSize tr').append('<td>' + j);
+					$('#tabSize td:last').attr('id', 'l1c' + j)
+					.click({line:1, col:j},createTab)
+					.mouseover({line:1, col:j},tabSizeHover);
+				}
+				
+				// tbody others line
+				for(var i = 2; i <= l; i++) {
+					$('#tabSize tbody').append('<tr>');
+					for(var j = 1; j <= c; j++) {
+						$('#tabSize tr:last').append('<td>' + (j == 1 ? i : ''));
+						$('#tabSize td:last').attr('id', 'l' + i + 'c' + j)
+						.click({line:i, col:j},createTab)
+						.mouseover({line:i, col:j},tabSizeHover);
+					}
+				}
+			}
+			
+			function tabSizeHover(event) {
+				for(var i = 1; i <= tabSize["line"]; i++) {
+					for(var j = 1; j <= tabSize["col"]; j++) {
+						if(i <= event.data.line && j <= event.data.col) {
+							$("#l" + i + "c" + j).css('background-color', 'rgba(200,200,200,0.8)');
+						} else {
+							$("#l" + i + "c" + j).css('background-color', 'rgba(230,230,230,0.8)');
+						}
+					}
+				}
+			}
+			
+			function createTab(event) {
+				$('#tabSize').css('display', 'none');
+				var scrollPos = inputPane.scrollTop;
+				var pos = Math.max(inputPane.selectionStart, inputPane.selectionEnd);
+				var selection = "\n|";
+				for(var i = 0; i < event.data.col; i++) {
+					(i == 0) ? selection += "| title" : selection += " | title";
+				}
+				selection += " |\n";
+				for(var i = 1; i < event.data.line; i++) {
+					for(var j = 0; j < event.data.col; j++) {
+						selection += " | item";
+					}
+					selection += " |\n";
+				}
+				selection += "\n";
+				
+				var cursPos = pos + selection.length;
+				inputPane.value = inputPane.value.substring(0, pos) + selection + inputPane.value.substring(pos, inputPane.value.length);
+				inputPane.focus();
+				inputPane.setSelectionRange(cursPos, cursPos);
+				inputPane.scrollTop = scrollPos;
+				previewPane.scrollTop = scrollPos;
+				onConvertTextButtonClicked();
+			}
 
 			init();
 		});
@@ -692,6 +852,8 @@
 		return this.each(function() {
 				var $$ = $(this).unbind().removeClass('markItUpEditor');
 				$$.parent('div').parent('div.markItUp').parent('div').replaceWith($$);
+				$('#tabSize').replaceWith();
+				$('#blackScreen').replaceWith();
 			}
 		);
 	};

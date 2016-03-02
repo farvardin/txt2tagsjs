@@ -1,7 +1,7 @@
 /**
  * marked - a txt2tags (and markdown) parser
  * 
- * version 2014-05-29
+ * version 2015-07-21
  * 
  * original project, only for markdown:
  * Copyright (c) 2011-2014, Christopher Jeffrey. (MIT Licensed)
@@ -134,17 +134,17 @@ Lexer.rules = block;
  * Static Lex Method
  */
 
-Lexer.lex = function(src, options) {
+Lexer.lex = function(text, options) {
   var lexer = new Lexer(options);
-  return lexer.lex(src);
+  return lexer.lex(text);
 };
 
 /**
  * Preprocessing
  */
 
-Lexer.prototype.lex = function(src) {
-  src = src
+Lexer.prototype.lex = function(text) {
+  text = text
     .replace(/\r\n|\r/g, '\n')
     //t2t// // .replace(/\t/g, '    ')
     .replace(/\u00a0/g, ' ')
@@ -153,135 +153,140 @@ Lexer.prototype.lex = function(src) {
       // ------- TXT2TAGS to html //
     
     // ------ protect http:// before parsing 
-    src = src.replace(/https:\/\//g, 'MYHTTPS');
-    src = src.replace(/http:\/\//g, 'MYHTTP');
-    src = src.replace(/sftp:\/\//g, 'MYSFTP');
-    src = src.replace(/ftps:\/\//g, 'MYFTPS');
-    src = src.replace(/ftp:\/\//g, 'MYFTP');
+    text = text.replace(/https:\/\//g, 'MYHTTPS');
+    text = text.replace(/http:\/\//g, 'MYHTTP');
+    text = text.replace(/sftp:\/\//g, 'MYSFTP');
+    text = text.replace(/ftps:\/\//g, 'MYFTPS');
+    text = text.replace(/ftp:\/\//g, 'MYFTP');
 
 	// macros
 	//var currentTime = new Date();
-	//src = src.replace(/%%date/g, '<script>document.write(currentTime);</script>');
+	//text = text.replace(/%%date/g, '<script>document.write(currentTime);</script>');
 
 
     // ------ horizontal line (---------------------)
-    src = src.replace(/(-|_){20,}/g, '<hr/>')
-    src = src.replace(/(=){20,}/g, '<hr noshade="noshade" size="5"/>')
+    text = text.replace(/(-|_){20,}/g, '<hr/>')
+    text = text.replace(/(=){20,}/g, '<hr noshade="noshade" size="5"/>')
     // ------ headings      = h1 =  /   == h2 ==
     // we add 2 extra new lines to be sure it will close ending lists
-    src = src.replace(/\s*=====\s*(.+)\s*=====/gm,"\n\n<h5>$1</h5>\n");
-    src = src.replace(/\s*====\s*(.+)\s*====/gm,"\n\n<h4>$1</h4>\n");
-    src = src.replace(/\s*===\s*(.+)\s*===/gm,"\n\n<h3>$1</h3>\n");
-    src = src.replace(/\s*==\s*(.+)\s*==/gm,"\n\n<h2>$1</h2>\n");
-    src = src.replace(/^\s*=\s*(.+)\s*=/gm,"\n\n<h1>$1</h1>\n");
+    text = text.replace(/\s*=====\s*(.+)\s*=====/gm,"\n\n<h5>$1</h5>\n");
+    text = text.replace(/\s*====\s*(.+)\s*====/gm,"\n\n<h4>$1</h4>\n");
+    text = text.replace(/\s*===\s*(.+)\s*===/gm,"\n\n<h3>$1</h3>\n");
+    text = text.replace(/\s*==\s*(.+)\s*==/gm,"\n\n<h2>$1</h2>\n");
+    text = text.replace(/^\s*=\s*(.+)\s*=/gm,"\n\n<h1>$1</h1>\n");
     // ------ bold / strong **item** (we disable them for ``code``)
    	// we protect the ``**`` and ``**bold**`` schemes
-    src = src.replace(/``\*\*``/g, '<code>&#42;&#42;</code>');
-    src = src.replace(/``\*\*([^\s](.*?[^\s])?)\*\*``/g, '<code>&#42;&#42;$1&#42;&#42;</code>');
+    text = text.replace(/``\*\*``/g, '<code>&#42;&#42;</code>');
+    text = text.replace(/``\*\*([^\s](.*?[^\s])?)\*\*``/g, '<code>&#42;&#42;$1&#42;&#42;</code>');
    	// by using negative lookahead see http://www.regular-expressions.info/lookaround.html
     // don't use [^``] which "eat" characters
     // maybe we can do better... 
-    src = src.replace(/(?!``)?\*\*([^\s](.*?[^\s])?)\*\*(?!``)/g, '<b>$1</b>');
+    text = text.replace(/(?!``)?\*\*([^\s](.*?[^\s])?)\*\*(?!``)/g, '<b>$1</b>');
     // ------ underline     __item__
-   	src = src.replace(/(?!``)__([^\s](.*?[^\s])?)__(?!``)/g, '<u>$1</u>');
+   	text = text.replace(/(?!``)__([^\s](.*?[^\s])?)__(?!``)/g, '<u>$1</u>');
     // ------ strikeout     --item--
-   	src = src.replace(/(?!``)--([^\s](.*?[^\s])?)--(?!``)/g, '<del>$1</del>');
+   	text = text.replace(/(?!``)--([^\s](.*?[^\s])?)--(?!``)/g, '<del>$1</del>');
     // ------ italic /em    //item//
-    //src = src.replace(/[^(ht|f)tps?:]\/\/([^\s](.*?[^\s])?)\/\//g, ' <i>$1</i>');
-    src = src.replace(/``\/\/([^\s](.*?[^\s])?)\/\/``/g, '<code>&#47;&#47;$1&#47;&#47;</code>');  
-    src = src.replace(/(?!``)\/\/([^\s](.*?[^\s])?)\/\/(?!``)/g, '<i>$1</i>');  
+    //text = text.replace(/[^(ht|f)tps?:]\/\/([^\s](.*?[^\s])?)\/\//g, ' <i>$1</i>');
+    text = text.replace(/``\/\/([^\s](.*?[^\s])?)\/\/``/g, '<code>&#47;&#47;$1&#47;&#47;</code>');  
+    text = text.replace(/(?!``)\/\/([^\s](.*?[^\s])?)\/\/(?!``)/g, '<i>$1</i>');  
     // ------ linked images (note: first before links)
-    src = src.replace(/^\s*\[\[(.+)?.jpg\] (.+)?\]/gm, '<a href="$2"><img src="$1.jpg"></img></a>');
-    src = src.replace(/^\s*\[\[(.+)?.png\] (.+)?\]/gm, '<a href="$2"><img src="$1.png"></img></a>');
-    src = src.replace(/^\s*\[\[(.+)?.gif\] (.+)?\]/gm, '<a href="$2"><img src="$1.gif"></img></a>');
+    text = text.replace(/^\s*\[\[(.+)?.jpg\] (.+)?\]/gm, '<a href="$2"><img src="$1.jpg"></img></a>');
+    text = text.replace(/^\s*\[\[(.+)?.png\] (.+)?\]/gm, '<a href="$2"><img src="$1.png"></img></a>');
+    text = text.replace(/^\s*\[\[(.+)?.gif\] (.+)?\]/gm, '<a href="$2"><img src="$1.gif"></img></a>');
     
     // ------ images       [image.png]
-    src = src.replace(/^\s*\[(.+)?.jpg\]/gm, '<img src="$1.jpg"></img>');
-    src = src.replace(/^\s*\[(.+)?.png\]/gm, '<img src="$1.png"></img>');
-    src = src.replace(/^\s*\[(.+)?.gif\]/gm, '<img src="$1.gif"></img>');
+    text = text.replace(/^\s*\[(.+)?.jpg\]/gm, '<img src="$1.jpg"></img>');
+    text = text.replace(/^\s*\[(.+)?.png\]/gm, '<img src="$1.png"></img>');
+    text = text.replace(/^\s*\[(.+)?.gif\]/gm, '<img src="$1.gif"></img>');
     
     // ------ normal link   [item http://url] 
-    src = src.replace(/\[(.*?) MYSFTP(.*?)\]/g, '<a href="MYSFTP$2">$1</a>');
-    src = src.replace(/\[(.*?) MYFTPS(.*?)\]/g, '<a href="MYFTPS$2">$1</a>');
-    src = src.replace(/\[(.*?) MYFTP(.*?)\]/g, '<a href="MYFTP$2">$1</a>');
-    src = src.replace(/\[(.*?) MYHTTPS(.*?)\]/g, '<a href="MYHTTPS$2">$1</a>');
-    src = src.replace(/\[(.*?) MYHTTP(.*?)\]/g, '<a href="MYHTTP$2">$1</a>');
+    text = text.replace(/\[(.*?) MYSFTP(.*?)\]/g, '<a href="MYSFTP$2">$1</a>');
+    text = text.replace(/\[(.*?) MYFTPS(.*?)\]/g, '<a href="MYFTPS$2">$1</a>');
+    text = text.replace(/\[(.*?) MYFTP(.*?)\]/g, '<a href="MYFTP$2">$1</a>');
+    text = text.replace(/\[(.*?) MYHTTPS(.*?)\]/g, '<a href="MYHTTPS$2">$1</a>');
+    text = text.replace(/\[(.*?) MYHTTP(.*?)\]/g, '<a href="MYHTTP$2">$1</a>');
+
+    // lionwiki links [[desc | local.link]]
+    text = text.replace(/\[\[(.*)[ ]*\|[ ]*(.*?)\]\]/g, '<a href="index.php?page=$2">$1</a>');
+    
+    text = text.replace(/\[\[(.*?)\]\]/g, '<a href="index.php?page=$1">$1</a>');
     
     // local links
-    //bug: src = src.replace(/\[(.*?) ([^ ].*?)\]/g, '<a href="$2">$1</a>');
+    //bug: text = text.replace(/\[(.*?) ([^ ].*?)\]/g, '<a href="$2">$1</a>');
     // workaround: use [description local:link]
-    src = src.replace(/\[(.*?) local:([^ ].*?)\]/g, '<a href="$2">$1</a>');
-    src = src.replace(/\[(.*) ([^ ].*?)\]/g, '<a href="$2">$1</a>');
+    text = text.replace(/\[(.*?) local:([^ ].*?)\]/g, '<a href="$2">$1</a>');
+    text = text.replace(/\[(.*) ([^ ].*?)\]/g, '<a href="$2">$1</a>');
     
     // revert protected http://
-    src = src.replace(/MYSFTP/g, 'sftp:\/\/');
-    src = src.replace(/MYFTPS/g, 'ftps:\/\/');
-    src = src.replace(/MYFTP/g, 'ftp:\/\/');
-    src = src.replace(/MYHTTPS/g, 'https:\/\/');
-    src = src.replace(/MYHTTP/g, 'http:\/\/');
+    text = text.replace(/MYSFTP/g, 'sftp:\/\/');
+    text = text.replace(/MYFTPS/g, 'ftps:\/\/');
+    text = text.replace(/MYFTP/g, 'ftp:\/\/');
+    text = text.replace(/MYHTTPS/g, 'https:\/\/');
+    text = text.replace(/MYHTTP/g, 'http:\/\/');
 
 
     // ------ lazy link
-    src = src.replace(/[^(https|http):\/\/]www\.(.*?[^\s])\.(.*?[^\s(">)])\s+/gm, ' <a href="http://$1.$2">http://$1.$2</a> ');
+    text = text.replace(/[^(https|http):\/\/]www\.(.*?[^\s])\.(.*?[^\s(">)])\s+/gm, ' <a href="http://$1.$2">http://$1.$2</a> ');
 
-    //src = src.replace(/[^(href=")](www(.*?[^\s])\s+)/gi,"<a href=\"http://www$1\">http://www.$1</a>");
+    //text = text.replace(/[^(href=")](www(.*?[^\s])\s+)/gi,"<a href=\"http://www$1\">http://www.$1</a>");
         
     // ------ auto link     http://url
-    src = src.replace(/[^(href=")]((https|http|ftps|sftp|dict):[^'"\s]+)/gi," <a href=\"$1\">$1</a>");
+    text = text.replace(/[^(href=")]((https|http|ftps|sftp|dict):[^'"\s]+)/gi," <a href=\"$1\">$1</a>");
       
     // ------ comment
-    src = src.replace(/^%(.+)$/gm, '');
+    text = text.replace(/^%(.+)$/gm, '');
 
     // ---- blockquote. Note only use REAL tabs for blockquotes, not 4 spaces!
-    //src = src.replace(/^[ ]{8}(?!-)(.*?)$/gm, '<blockquote><blockquote>$1</blockquote></blockquote>\n');
-	src = src.replace(/^\t\t(?!-)(.*?)$/gm, '<blockquote><blockquote>$1</blockquote></blockquote>\n');
-    //src = src.replace(/^    +(?!-)(.*?)$/gm, '<blockquote>$1</blockquote>\n');
-	src = src.replace(/^\t(?!-)(.*?)$/gm, '<blockquote>$1</blockquote>\n');
+    //text = text.replace(/^[ ]{8}(?!-)(.*?)$/gm, '<blockquote><blockquote>$1</blockquote></blockquote>\n');
+	text = text.replace(/^\t\t(?!-)(.*?)$/gm, '<blockquote><blockquote>$1</blockquote></blockquote>\n');
+    //text = text.replace(/^    +(?!-)(.*?)$/gm, '<blockquote>$1</blockquote>\n');
+	text = text.replace(/^\t(?!-)(.*?)$/gm, '<blockquote>$1</blockquote>\n');
     // ------ code     ``item``  or ^``` item
-    src = src.replace(/\s``` (.+)$/gm, '<pre>$1</pre>');
-    src = src.replace(/``([^\s](.*?[^\s])?)``/g, '<code>$1</code>');
-    src = src.replace(/^\+\s*(.+)$/gm, '1. $1');
-    src = src.replace(/^:\s(.+)$/gm, '<dl><dt>$1</dt></dl>');/* for definition lists */
-    //src = src.replace(/<dl>/gm, '</dd><dl>');/* for definition lists */
-    //src = src.replace(/^\s*\|(.+)\|(.+)\|$/gm, '<table><tr><td>$1</td><td>$2</td><tr></</table>');
+    text = text.replace(/\s``` (.+)$/gm, '<pre>$1</pre>');
+    text = text.replace(/``([^\s](.*?[^\s])?)``/g, '<code>$1</code>');
+    text = text.replace(/^\+\s*(.+)$/gm, '1. $1');
+    text = text.replace(/^:\s(.+)$/gm, '<dl><dt>$1</dt></dl>');/* for definition lists */
+    //text = text.replace(/<dl>/gm, '</dd><dl>');/* for definition lists */
+    //text = text.replace(/^\s*\|(.+)\|(.+)\|$/gm, '<table><tr><td>$1</td><td>$2</td><tr></</table>');
     
     // tables
-    src = src.replace(/^[ ]*\|[\_|\/|\|]/gm, '|');
-    //src = src.replace(/^[ ]*\|\|(.+)\|$/gm, '<table><tr><th>$1</td></th></table>');
-    //src = src.replace(/^[ ]*\|\_(.+)\|$/gm, '<table><tr><th>$1</td></th></table>');
-    //src = src.replace(/^[ ]*\|\/(.+)\|$/gm, '<table><tr><th>$1</td></th></table>');
-    //src = src.replace(/^[ ]*\|(.+)\|$/gm, '<table><tr><td>$1</td></tr></table>');
+    text = text.replace(/^[ ]*\|[\_|\/|\|]/gm, '|');
+    //text = text.replace(/^[ ]*\|\|(.+)\|$/gm, '<table><tr><th>$1</td></th></table>');
+    //text = text.replace(/^[ ]*\|\_(.+)\|$/gm, '<table><tr><th>$1</td></th></table>');
+    //text = text.replace(/^[ ]*\|\/(.+)\|$/gm, '<table><tr><th>$1</td></th></table>');
+    //text = text.replace(/^[ ]*\|(.+)\|$/gm, '<table><tr><td>$1</td></tr></table>');
     
-    //src = src.replace(/<table>([^*]+?)\|([^*]+?)<\/table>/gm, '<table><tr><td>$1</td><td>$2</td></table>');
+    //text = text.replace(/<table>([^*]+?)\|([^*]+?)<\/table>/gm, '<table><tr><td>$1</td><td>$2</td></table>');
 
     // preproc, doesn't work yet...
-    // src = src.replace(/^%!preproc: \'(.+)\' \'(.+)\'/gm, '');
+    // text = text.replace(/^%!preproc: \'(.+)\' \'(.+)\'/gm, '');
 
     // ------ // end of txt2tags to html
 
     // TEXTALLION support //
     
     // space after \n = new line and centered / for poetry
-    src = src.replace(/^ (?!-| |\+|\t)(?=[A-Za-z0-9])(.*?)$/gm, '&nbsp; &nbsp; &nbsp; $1 <br/>');
-    src = src.replace(/\\\\/gm, '<br/>');
+    text = text.replace(/^ (?!-| |\+|\t)(?=[A-Za-z0-9])(.*?)$/gm, '&nbsp; &nbsp; &nbsp; $1 <br/>');
+    text = text.replace(/\\\\/gm, '<br/>');
     
-    src = src.replace(/---/g, '—');
-    src = src.replace(/°°(.*?)°°/g, '<i>($1)</i>');
-    src = src.replace(/\{ \/\/ \}/g, '<i>');
-    src = src.replace(/\{\/\/\/ \}/g, '</i>');
+    //text = text.replace(/---/g, '—'); // <!> bad display
+    text = text.replace(/°°(.*?)°°/g, '<i>($1)</i>');
+    text = text.replace(/\{ \/\/ \}/g, '<i>');
+    text = text.replace(/\{\/\/\/ \}/g, '</i>');
     
     
     // end of Textallion support //
     
-  return this.token(src, true);
+  return this.token(text, true);
 };
 
 /**
  * Lexing
  */
 
-Lexer.prototype.token = function(src, top, bq) {
-  var src = src.replace(/^ +$/gm, '')
+Lexer.prototype.token = function(text, top, bq) {
+  var text = text.replace(/^ +$/gm, '')
     , next
     , loose
     , cap
@@ -292,10 +297,10 @@ Lexer.prototype.token = function(src, top, bq) {
     , i
     , l;
 
-  while (src) {
+  while (text) {
     // newline
-    if (cap = this.rules.newline.exec(src)) {
-      src = src.substring(cap[0].length);
+    if (cap = this.rules.newline.exec(text)) {
+      text = text.substring(cap[0].length);
       if (cap[0].length > 1) {
         this.tokens.push({
           type: 'space'
@@ -305,8 +310,8 @@ Lexer.prototype.token = function(src, top, bq) {
 
     // code
     //t2t: blockquote //
-    if (cap = this.rules.code.exec(src)) {
-      src = src.substring(cap[0].length);
+    if (cap = this.rules.code.exec(text)) {
+      text = text.substring(cap[0].length);
       cap = cap[0].replace(/^ {4}/gm, '');
       this.tokens.push({
         type: 'code',
@@ -318,8 +323,8 @@ Lexer.prototype.token = function(src, top, bq) {
     }
 
     // fences (gfm)
-    if (cap = this.rules.fences.exec(src)) {
-      src = src.substring(cap[0].length);
+    if (cap = this.rules.fences.exec(text)) {
+      text = text.substring(cap[0].length);
       this.tokens.push({
         type: 'code',
         lang: cap[2],
@@ -329,8 +334,8 @@ Lexer.prototype.token = function(src, top, bq) {
     }
 
     // heading
-    if (cap = this.rules.heading.exec(src)) {
-      src = src.substring(cap[0].length);
+    if (cap = this.rules.heading.exec(text)) {
+      text = text.substring(cap[0].length);
       this.tokens.push({
         type: 'heading',
         depth: cap[1].length,
@@ -340,8 +345,8 @@ Lexer.prototype.token = function(src, top, bq) {
     }
 
     // table no leading pipe (gfm)
-    if (top && (cap = this.rules.nptable.exec(src))) {
-      src = src.substring(cap[0].length);
+    if (top && (cap = this.rules.nptable.exec(text))) {
+      text = text.substring(cap[0].length);
 
       item = {
         type: 'table',
@@ -372,8 +377,8 @@ Lexer.prototype.token = function(src, top, bq) {
     }
 
     // lheading
-    if (cap = this.rules.lheading.exec(src)) {
-      src = src.substring(cap[0].length);
+    if (cap = this.rules.lheading.exec(text)) {
+      text = text.substring(cap[0].length);
       this.tokens.push({
         type: 'heading',
         depth: cap[2] === '=' ? 1 : 2,
@@ -383,8 +388,8 @@ Lexer.prototype.token = function(src, top, bq) {
     }
 
     // hr
-    if (cap = this.rules.hr.exec(src)) {
-      src = src.substring(cap[0].length);
+    if (cap = this.rules.hr.exec(text)) {
+      text = text.substring(cap[0].length);
       this.tokens.push({
         type: 'hr'
       });
@@ -392,8 +397,8 @@ Lexer.prototype.token = function(src, top, bq) {
     }
 
     // blockquote
-    if (cap = this.rules.blockquote.exec(src)) {
-      src = src.substring(cap[0].length);
+    if (cap = this.rules.blockquote.exec(text)) {
+      text = text.substring(cap[0].length);
 
       this.tokens.push({
         type: 'blockquote_start'
@@ -414,8 +419,8 @@ Lexer.prototype.token = function(src, top, bq) {
     }
 
     // list
-    if (cap = this.rules.list.exec(src)) {
-      src = src.substring(cap[0].length);
+    if (cap = this.rules.list.exec(text)) {
+      text = text.substring(cap[0].length);
       bull = cap[2];
 
       this.tokens.push({
@@ -452,7 +457,7 @@ Lexer.prototype.token = function(src, top, bq) {
         if (this.options.smartLists && i !== l - 1) {
           b = block.bullet.exec(cap[i + 1])[0];
           if (bull !== b && !(bull.length > 1 && b.length > 1)) {
-            src = cap.slice(i + 1).join('\n') + src;
+            text = cap.slice(i + 1).join('\n') + text;
             i = l - 1;
           }
         }
@@ -488,8 +493,8 @@ Lexer.prototype.token = function(src, top, bq) {
     }
 
     // html
-    if (cap = this.rules.html.exec(src)) {
-      src = src.substring(cap[0].length);
+    if (cap = this.rules.html.exec(text)) {
+      text = text.substring(cap[0].length);
       this.tokens.push({
         type: this.options.sanitize
           ? 'paragraph'
@@ -501,8 +506,8 @@ Lexer.prototype.token = function(src, top, bq) {
     }
 
     // def
-    if ((!bq && top) && (cap = this.rules.def.exec(src))) {
-      src = src.substring(cap[0].length);
+    if ((!bq && top) && (cap = this.rules.def.exec(text))) {
+      text = text.substring(cap[0].length);
       this.tokens.links[cap[1].toLowerCase()] = {
         href: cap[2],
         title: cap[3]
@@ -511,8 +516,8 @@ Lexer.prototype.token = function(src, top, bq) {
     }
 
     // table (gfm)
-    if (top && (cap = this.rules.table.exec(src))) {
-      src = src.substring(cap[0].length);
+    if (top && (cap = this.rules.table.exec(text))) {
+      text = text.substring(cap[0].length);
 
       item = {
         type: 'table',
@@ -545,8 +550,8 @@ Lexer.prototype.token = function(src, top, bq) {
     }
 
     // top-level paragraph
-    if (top && (cap = this.rules.paragraph.exec(src))) {
-      src = src.substring(cap[0].length);
+    if (top && (cap = this.rules.paragraph.exec(text))) {
+      text = text.substring(cap[0].length);
       this.tokens.push({
         type: 'paragraph',
         text: cap[1].charAt(cap[1].length - 1) === '\n'
@@ -557,9 +562,9 @@ Lexer.prototype.token = function(src, top, bq) {
     }
 
     // text
-    if (cap = this.rules.text.exec(src)) {
+    if (cap = this.rules.text.exec(text)) {
       // Top-level should never reach here.
-      src = src.substring(cap[0].length);
+      text = text.substring(cap[0].length);
       this.tokens.push({
         type: 'text',
         text: cap[0]
@@ -567,9 +572,9 @@ Lexer.prototype.token = function(src, top, bq) {
       continue;
     }
 
-    if (src) {
+    if (text) {
       throw new
-        Error('Infinite loop on byte: ' + src.charCodeAt(0));
+        Error('Infinite loop on byte: ' + text.charCodeAt(0));
     }
   }
 
@@ -683,33 +688,33 @@ InlineLexer.rules = inline;
  * Static Lexing/Compiling Method
  */
 
-InlineLexer.output = function(src, links, options) {
+InlineLexer.output = function(text, links, options) {
   var inline = new InlineLexer(links, options);
-  return inline.output(src);
+  return inline.output(text);
 };
 
 /**
  * Lexing/Compiling
  */
 
-InlineLexer.prototype.output = function(src) {
+InlineLexer.prototype.output = function(text) {
   var out = ''
     , link
     , text
     , href
     , cap;
 
-  while (src) {
+  while (text) {
     // escape
-    if (cap = this.rules.escape.exec(src)) {
-      src = src.substring(cap[0].length);
+    if (cap = this.rules.escape.exec(text)) {
+      text = text.substring(cap[0].length);
       out += cap[1];
       continue;
     }
 
     // autolink
-    if (cap = this.rules.autolink.exec(src)) {
-      src = src.substring(cap[0].length);
+    if (cap = this.rules.autolink.exec(text)) {
+      text = text.substring(cap[0].length);
       if (cap[2] === '@') {
         text = cap[1].charAt(6) === ':'
           ? this.mangle(cap[1].substring(7))
@@ -724,8 +729,8 @@ InlineLexer.prototype.output = function(src) {
     }
 
     // url (gfm)
-    if (!this.inLink && (cap = this.rules.url.exec(src))) {
-      src = src.substring(cap[0].length);
+    if (!this.inLink && (cap = this.rules.url.exec(text))) {
+      text = text.substring(cap[0].length);
       text = escape(cap[1]);
       href = text;
       out += this.renderer.link(href, null, text);
@@ -733,13 +738,13 @@ InlineLexer.prototype.output = function(src) {
     }
 
     // tag
-    if (cap = this.rules.tag.exec(src)) {
+    if (cap = this.rules.tag.exec(text)) {
       if (!this.inLink && /^<a /i.test(cap[0])) {
         this.inLink = true;
       } else if (this.inLink && /^<\/a>/i.test(cap[0])) {
         this.inLink = false;
       }
-      src = src.substring(cap[0].length);
+      text = text.substring(cap[0].length);
       out += this.options.sanitize
         ? escape(cap[0])
         : cap[0];
@@ -747,8 +752,8 @@ InlineLexer.prototype.output = function(src) {
     }
 
     // link
-    if (cap = this.rules.link.exec(src)) {
-      src = src.substring(cap[0].length);
+    if (cap = this.rules.link.exec(text)) {
+      text = text.substring(cap[0].length);
       this.inLink = true;
       out += this.outputLink(cap, {
         href: cap[2],
@@ -759,14 +764,14 @@ InlineLexer.prototype.output = function(src) {
     }
 
     // reflink, nolink
-    if ((cap = this.rules.reflink.exec(src))
-        || (cap = this.rules.nolink.exec(src))) {
-      src = src.substring(cap[0].length);
+    if ((cap = this.rules.reflink.exec(text))
+        || (cap = this.rules.nolink.exec(text))) {
+      text = text.substring(cap[0].length);
       link = (cap[2] || cap[1]).replace(/\s+/g, ' ');
       link = this.links[link.toLowerCase()];
       if (!link || !link.href) {
         out += cap[0].charAt(0);
-        src = cap[0].substring(1) + src;
+        text = cap[0].substring(1) + text;
         continue;
       }
       this.inLink = true;
@@ -776,50 +781,50 @@ InlineLexer.prototype.output = function(src) {
     }
 
     // strong
-    if (cap = this.rules.strong.exec(src)) {
-      src = src.substring(cap[0].length);
+    if (cap = this.rules.strong.exec(text)) {
+      text = text.substring(cap[0].length);
       out += this.renderer.strong(this.output(cap[2] || cap[1]));
       continue;
     }
 
     // em
-    if (cap = this.rules.em.exec(src)) {
-      src = src.substring(cap[0].length);
+    if (cap = this.rules.em.exec(text)) {
+      text = text.substring(cap[0].length);
       out += this.renderer.em(this.output(cap[2] || cap[1]));
       continue;
     }
 
     // code
-    if (cap = this.rules.code.exec(src)) {
-      src = src.substring(cap[0].length);
+    if (cap = this.rules.code.exec(text)) {
+      text = text.substring(cap[0].length);
       out += this.renderer.codespan(escape(cap[2], true));
       continue;
     }
 
     // br
-    if (cap = this.rules.br.exec(src)) {
-      src = src.substring(cap[0].length);
+    if (cap = this.rules.br.exec(text)) {
+      text = text.substring(cap[0].length);
       out += this.renderer.br();
       continue;
     }
 
     // del (gfm)
-    if (cap = this.rules.del.exec(src)) {
-      src = src.substring(cap[0].length);
+    if (cap = this.rules.del.exec(text)) {
+      text = text.substring(cap[0].length);
       out += this.renderer.del(this.output(cap[1]));
       continue;
     }
 
     // text
-    if (cap = this.rules.text.exec(src)) {
-      src = src.substring(cap[0].length);
+    if (cap = this.rules.text.exec(text)) {
+      text = text.substring(cap[0].length);
       out += escape(this.smartypants(cap[0]));
       continue;
     }
 
-    if (src) {
+    if (text) {
       throw new
-        Error('Infinite loop on byte: ' + src.charCodeAt(0));
+        Error('Infinite loop on byte: ' + text.charCodeAt(0));
     }
   }
 
@@ -1041,18 +1046,18 @@ function Parser(options) {
  * Static Parse Method
  */
 
-Parser.parse = function(src, options, renderer) {
+Parser.parse = function(text, options, renderer) {
   var parser = new Parser(options, renderer);
-  return parser.parse(src);
+  return parser.parse(text);
 };
 
 /**
  * Parse Loop
  */
 
-Parser.prototype.parse = function(src) {
-  this.inline = new InlineLexer(src.links, this.options, this.renderer);
-  this.tokens = src.reverse();
+Parser.prototype.parse = function(text) {
+  this.inline = new InlineLexer(text.links, this.options, this.renderer);
+  this.tokens = text.reverse();
 
   var out = '';
   while (this.next()) {
@@ -1267,7 +1272,7 @@ function merge(obj) {
  * Marked
  */
 
-function marked(src, opt, callback) {
+function marked(text, opt, callback) {
   if (callback || typeof opt === 'function') {
     if (!callback) {
       callback = opt;
@@ -1282,7 +1287,7 @@ function marked(src, opt, callback) {
       , i = 0;
 
     try {
-      tokens = Lexer.lex(src, opt)
+      tokens = Lexer.lex(text, opt)
     } catch (e) {
       return callback(e);
     }
@@ -1339,7 +1344,7 @@ function marked(src, opt, callback) {
   }
   try {
     if (opt) opt = merge({}, marked.defaults, opt);
-    return Parser.parse(Lexer.lex(src, opt), opt);
+    return Parser.parse(Lexer.lex(text, opt), opt);
   } catch (e) {
     e.message += '\nPlease report this to https://github.com/chjj/marked.';
     if ((opt || marked.defaults).silent) {

@@ -1,15 +1,17 @@
 //
-// showdown-gui.js
+// txt2tagsjs-gui.js
+//
+// 2015-07-21
 //
 // A sample application for Showdown, a javascript port
-// of Markdown.
+// of --Markdown-- txt2tags.
 //
 // Copyright (c) 2007 John Fraser.
 //
 // Redistributable under a BSD-style open source license.
 // See license.txt for more information.
 //
-// The full source distribution is at:
+// The full source distribution was at:
 //
 //				A A L
 //				T C A
@@ -45,7 +47,17 @@
 //
 // Register for onload
 //
-window.onload = startGui;
+
+
+if(typeof wons == "undefined")
+	wons = new Array();
+
+wons.push(startGui);
+
+window.onload = function() {
+	for(var i = 0; i < wons.length; i++)
+		wons[i]();
+}
 
 
 //
@@ -54,12 +66,15 @@ window.onload = startGui;
 
 var converter;
 var convertTextTimer,processingTime;
-var lastText,lastOutput,lastRoomLeft;
-var convertTextSetting, convertTextButton, paneSetting;
+var lastText,lastOutput,lastRoomLeft,lastHeight;
 var inputPane,previewPane,outputPane,syntaxPane;
-var maxDelay = 3000; // longest update pause (in ms)
-var scrollActivate = false;
-var tab = {"line": 10, "col": 10};
+var maxDelay = 3000;						// Longest update pause (in ms)
+var scrollSynchro = true;					// Synchronized scrolling
+var typeDisplay = "inline-block";			// "inline" or "block"
+var displayPreview = true;					// Show previewPane
+var initSizePane = 400;						// First size of inputPane
+var tabMarkItUp = {"line": 10, "col": 10};	// Size of MarkItUp automatic table
+
 //
 //	Initialization
 //
@@ -129,7 +144,7 @@ function startGui() {
 	// give the input pane focus
 	inputPane.focus();
 
-	createPreTable(tab["line"],tab["col"]);
+	//createPreTable(tab["line"],tab["col"]);
 	inputPane.addEventListener('DOMMouseScroll', wheel, false);
 	previewPane.addEventListener('DOMMouseScroll', wheel, false);
 	outputPane.addEventListener('DOMMouseScroll', wheel, false);
@@ -138,6 +153,7 @@ function startGui() {
 
 	// start the other panes at the top
 	// (our smart scrolling moved them to the bottom)
+	inputPane.scrollTop = 0;
 	previewPane.scrollTop = 0;
 	outputPane.scrollTop = 0;
 }
@@ -273,7 +289,7 @@ var outputScrollPos;
 function getScrollPos(element) {
 	// favor the bottom when the text first overflows the window
 	if (element.scrollHeight <= element.clientHeight)
-		return 1.0;
+		return 0;
 	return element.scrollTop/(element.scrollHeight-element.clientHeight);
 }
 
@@ -331,48 +347,42 @@ function getWindowHeight(element) {
 }
 
 function setPaneHeights() {
-	var roomLeft;
-	var markItUpHeight = 0;
-	var screen = window.innerWidth > 799;
-	if(document.getElementById('markItUpInputPane')) {
-		markItUpHeight = getElementHeight(document.getElementById('markItUpInputPane'))
-					   - getElementHeight(inputPane);
-	}
+	var height = 0;
+	var fix;
 	
-	var footer = document.getElementById("footer");
-
-	var windowHeight = getWindowHeight();
-	var footerHeight = getElementHeight(footer);
-	var textareaTop = getTop(inputPane);
-	// figure out how much room the panes should fill
-	if(screen) {
-		roomLeft = windowHeight - footerHeight - textareaTop;
-	} else {
-		roomLeft = windowHeight*0.35;
-	}
-	if (roomLeft < 300) roomLeft = 300;
-	// if it hasn't changed, return
-	if (roomLeft == lastRoomLeft && !(window.innerWidth > 799)) {
-		return;
-	}
-	lastRoomLeft = roomLeft;
-	
-	// resize all panes
-	inputPane.style.height = roomLeft + "px";
-	previewPane.style.height = roomLeft + markItUpHeight + "px";
-	outputPane.style.height = roomLeft + markItUpHeight + "px";
-	syntaxPane.style.height = roomLeft + markItUpHeight + "px";
-	if(!(window.innerWidth > 799)) updateTop(true);
-	else updateTop(false);
-}
-
-function updateTop(bool) {
-	if(bool) {
-		document.getElementById('leftContainer').style.top = "0";
-		document.getElementById('rightContainer').style.top = getElementHeight(document.getElementById('leftContainer')) + 20 +"px";
-	} else {
-		document.getElementById('leftContainer').style.top = "0";
-		document.getElementById('rightContainer').style.top = "0";
+	if(document.getElementById('inputPane')) {
+		var markItUp = document.getElementById('markItUpInputPane') ? getElementHeight(document.getElementById('markItUpInputPane')) - getElementHeight(inputPane) : 0;
+		var panesContainer = document.getElementById('panesContainer');
+		fix = getElementHeight(inputPane) - (inputPane.style.height ? parseInt(inputPane.style.height) : getElementHeight(inputPane));
+		height = Math.max(200,getElementHeight(inputPane) + markItUp);
+		
+		if(typeDisplay == "inline-block") {
+			previewPane.style.height = height - fix + "px";
+			outputPane.style.height = height - fix + "px";
+			inputPane.style.height = height - markItUp - fix + "px";
+			panesContainer.parentNode.style.height = (height + 30) + "px";
+			document.getElementById('rightContainer').style.top = 0;
+			document.getElementById('rightContainer').style.left = "51%";
+		} else {
+			previewPane.style.height = height + "px";
+			outputPane.style.height = height + "px";
+			inputPane.style.height = height - markItUp - fix + "px";
+			panesContainer.parentNode.style.height = (height*(displayPreview ? 1 : 2) + 30) + "px";
+			document.getElementById('rightContainer').style.top = (height + 15) + "px";
+			document.getElementById('rightContainer').style.left = "0%";
+		} 
+		document.getElementById('leftContainer').style.top = 0;
+		document.getElementById('leftContainer').style.left = "0%";
+	} else if(document.getElementsByClassName('ajaxContentTextarea').length > 0) {
+		for(var i = 0; i < document.getElementsByClassName('ajaxContentTextarea').length; i++) {
+			fix = getElementHeight(document.getElementsByClassName('ajaxContentTextarea')[i])
+				- (document.getElementsByClassName('ajaxContentTextarea')[i].style.height
+				  ? parseInt(document.getElementsByClassName('ajaxContentTextarea')[i].style.height)
+				  : getElementHeight(document.getElementsByClassName('ajaxContentTextarea')[i]));
+			height = Math.max(200,getElementHeight(document.getElementsByClassName('ajaxContentTextarea')[i]));
+			
+			document.getElementsByClassName('ajaxContentTextarea')[i].style.height = height - fix + "px";
+		}
 	}
 }
 
@@ -385,10 +395,6 @@ function switchPlace() {
 	left.setAttribute("id", "rightContainer");
 	right.setAttribute("id", "leftContainer");
 	setPaneHeights();
-	if(!(window.innerWidth > 799)) {
-		right.style.top = "0";
-		left.style.top = getElementHeight(document.getElementById('leftContainer')) + 20 + "px";
-	}
 	
 	setTimeout(function() {
 		left.setAttribute("class","");
@@ -403,7 +409,7 @@ function change() {
 	valueOfPlace[1] = temp;
 }
 
-var sync = function(idScroll) {	
+function sync(idScroll) {	
 	if(idScroll) {
 		previewPane.scrollTop = Math.round(inputPane.scrollTop / (inputPane.scrollHeight - inputPane.offsetHeight)
 							  * (previewPane.scrollHeight - previewPane.offsetHeight));
@@ -425,21 +431,23 @@ var sync = function(idScroll) {
 	}
 }
 
-var switchSync = function() {
-	if(scrollActivate) {
+function switchSync() {
+	scrollSynchro = !scrollSynchro;
+	if(scrollSynchro) {
 		inputPane.setAttribute("onscroll","");
 		previewPane.setAttribute("onscroll","");
 		outputPane.setAttribute("onscroll","");
-		syntaxPane.setAttribute("onscroll","");
+		document.getElementById('synchronizeButton').setAttribute("class", "txt2tagsMenu button_txt2tags_false");
 		document.getElementById('synchronizeButton').style.backgroundColor = "rgb(255,60,0)";
 	} else {
 		inputPane.setAttribute("onscroll","sync(true)");
 		previewPane.setAttribute("onscroll","sync(false)");
 		outputPane.setAttribute("onscroll","sync(false)");
 		syntaxPane.setAttribute("onscroll","sync(false)");
+		document.getElementById('synchronizeButton').setAttribute("class", "txt2tagsMenu button_txt2tags_true");
 		document.getElementById('synchronizeButton').style.backgroundColor = "rgb(0,230,80)";
 	}
-	scrollActivate = !scrollActivate;
+	// scrollActivate = !scrollActivate; // will block rendering if uncommented
 }
 
 function wheel(event) {
@@ -450,66 +458,50 @@ function wheel(event) {
 	event.returnValue = false;
 }
 
-function updateTime() {
-	time = document.getElementById('processingTime');
-	time.style.transition = '';
-	time.style.backgroundColor = 'white';
-	setTimeout(function() {
-		time.style.transition = 'background-color 300ms';
-		time.style.backgroundColor = 'rgba(255,255,255,0)';
-	}, 200);
-}
-
-var tabSizeHover = function(line, col) {
-	for(var i = 1; i <= tab["line"]; i++) {
-		for(var j = 1; j <= tab["col"]; j++) {
-			if(i <= line && j <= col) {
-				document.getElementById("l" + i + "c" + j).style.backgroundColor = "rgba(200,200,200,0.8)";
-			} else {
-				document.getElementById("l" + i + "c" + j).style.backgroundColor = "rgba(230,230,230,0.8)";
-			}
-		}
+function switchDisplay(display) {
+	if(!display) {
+		typeDisplay == "inline-block" ? display = "block" : display = "inline-block";
+	}
+	var left = document.getElementById("leftContainer");
+	var right = document.getElementById("rightContainer");
+	if(display == "inline-block") {
+		left.style.display = "inline-block";
+		right.style.display = "inline-block";
+		left.style.width = displayPreview ? "100%" : "49%";
+		right.style.width = displayPreview ? "100%" : "49%";
+		typeDisplay = "inline-block";
+	} else {
+		left.style.display = "block";
+		right.style.display = "block";
+		left.style.width = "100%";
+		right.style.width = "100%";
+		typeDisplay = "block";
 	}
 }
 
-var createTab = function(line, col) {
-	document.getElementById('tabSize').style.display = "none";
-	var scrollPos = inputPane.scrollTop;
-	var pos = Math.max(inputPane.selectionStart, inputPane.selectionEnd);
-	var selection = "\n|";
-	for(var i = 0; i < line; i++) {
-		for(var j = 0; j < col; j++) {
-			if(i == 0 && j == 0) selection += "| item";
-			else selection += " | item";
-		}
-		selection += " |\n";
+function previewCache() {
+	panesContainer = document.getElementById('panesContainer');
+	if(previewPane.parentNode.id == "leftContainer") switchPlace();
+	if(displayPreview) {
+		previewPane.style.display = typeDisplay;
+		if(typeDisplay == "inline-block") {
+			document.getElementById("leftContainer").style.width = "49%";
+			document.getElementById("rightContainer").style.width = "49%";
+		} else inputPane.style.height = parseInt(inputPane.style.height)/2 + "px";
+		document.getElementById('displayPreview').setAttribute("class", "txt2tagsMenu button_txt2tags_true");
+		document.getElementById('changeButton').style.display = "inline-block";
+		document.getElementById('displayPane').style.display = "inline-block";
+		document.getElementById('synchronizeButton').style.display = "inline-block";
+	} else {
+		previewPane.style.display = "none";
+		if(typeDisplay == "inline-block") {
+			document.getElementById("leftContainer").style.width = "100%";
+			document.getElementById("rightContainer").style.width = "100%";
+		} else inputPane.style.height = parseInt(inputPane.style.height)*2 + "px";
+		document.getElementById('displayPreview').setAttribute("class", "txt2tagsMenu button_txt2tags_false");
+		document.getElementById('changeButton').style.display = "none";
+		document.getElementById('displayPane').style.display = "none";
+		document.getElementById('synchronizeButton').style.display = "none";
 	}
-	selection += "\n";
-	
-	var cursPos = pos + selection.length;
-	inputPane.value = inputPane.value.substring(0, pos) + selection + inputPane.value.substring(pos, inputPane.value.length);
-	inputPane.focus();
-	inputPane.setSelectionRange(cursPos, cursPos);
-	inputPane.scrollTop = scrollPos;
-	previewPane.scrollTop = scrollPos;
-	onConvertTextButtonClicked();
-}
-
-function createPreTable(l,c) {
-	var table = '<table><thead onclick="cancelTab()" onmouseover="tabSizeHover(0,0)"><td colspan=' +c+ '>Annuler</thead><tr>';
-	for(var i = 1; i <= l; i++) {
-		table += '<td id="l1c' +i+'" onmouseover="tabSizeHover(1,' +i+ ')" onclick="createTab(1,' +i+ ')">' + i;
-	}
-	for(var i = 2; i <= l; i++) {
-		table += '<tr>';
-		for(var j = 1; j <= c; j++) {
-			table += '<td id="l' +i+ 'c' +j+'" onmouseover="tabSizeHover(' +i+ ',' +j+ ')" onclick="createTab(' +i+ ',' +j+ ')">' + (j == 1 ? i : '');
-		}
-	}
-	table += '</table>';
-	document.getElementById('tabSize').innerHTML = table;
-}
-
-function cancelTab() {
-	document.getElementById('tabSize').style.display = "none";
+	displayPreview = !displayPreview;
 }

@@ -14,9 +14,9 @@
 
 <script type="text/javascript" src="markitup/jquery-1.6.2.min.js"></script>
 <script type="text/javascript" src="markitup/jquery.markitup.js"></script>
-<script type="text/javascript" src="markitup/sets/default/set.js"></script>
+<script type="text/javascript" src="markitup/sets/txt2tags/set.js"></script>
 <link rel="stylesheet" type="text/css" href="markitup/skins/simple/style.css" />
-<link rel="stylesheet" type="text/css" href="markitup/sets/default/style.css" />
+<link rel="stylesheet" type="text/css" href="markitup/sets/txt2tags/style.css" />
 <script type="text/javascript" >
 <!--
 $(document).ready(function()	{
@@ -40,10 +40,10 @@ $(document).ready(function()	{
 	$('.toggle').click(function() {
 		if ($("#inputPane.markItUpEditor").length === 1) {
  			$("#inputPane").markItUpRemove();
-			$("#markItUp").css("background-color","rgb(255,60,0)");
+			$("span", this).text("get markItUp! back");
 		} else {
 			$('#inputPane').markItUp(mySettings);
-			$("#markItUp").css("background-color","rgb(0,230,80)");
+			$("span", this).text("remove markItUp!");
 		}
  		return false;
 	});
@@ -62,7 +62,7 @@ $(document).ready(function()	{
 		<div id="headerContainer">
 		
 			<div style="display: inline-block;">
-				<button id="changeButton" onclick="switchPlace();" title="Changer de place"><span class="textInButton">Echange</span></button>
+				<button id="changeButton" onclick="switchPlace();" title="Changer de place"><span class="textInButton"><= Swap panes =></span></button>
 				<button id="synchronizeButton" onclick="switchSync();" title="Scroll synchronisé"><span class="textInButton">Scroll Sync</span></button>
 			</div>
 		
