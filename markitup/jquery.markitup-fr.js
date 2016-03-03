@@ -292,7 +292,7 @@
 					$('#pictureForm').replaceWith();
 					get();
 				}));
-				$('#blackScreen').css('display','block');
+				if(options.lionwiki) {$('#blackScreen').css('display','block');}
 			}
 
 			// markItUp! markups
