@@ -122,3 +122,99 @@
 	color:#FFF;
 	background-color:#000;
 }
+
+#tabSize {
+	display: none;
+	position: absolute;
+	z-index: 1;
+	color: black;
+}
+#tabSize table {
+	border-collapse: collapse;
+	cursor: pointer;
+}
+#tabSize thead {
+	background-color: rgba(255,0,0,0.8);
+	transition: background-color 100ms;
+	padding: 0;
+}
+#tabSize thead:hover {
+	background-color: rgba(0,255,0,0.8);
+}
+#tabSize td {
+	width: 20px;
+	height: 20px;
+	border: 1px solid rgb(60, 118, 157);
+	background-color: rgba(230,230,230, 0.8);
+	transition: background-color 70ms;
+	text-align: center;
+	font-weight: 900;
+	padding: 0;
+	vertical-align: middle;
+}
+
+#blackScreen {
+	display: none;
+	width: 100%;
+	height: 100%;
+	z-index: 10;
+	vertical-align: middle;
+	line-height: 100%;
+	text-align: center;
+	background-color: rgba(0,0,0,0.7);
+	position: fixed;
+	left: 0;
+	top: 0;
+}
+
+#pictureForm {
+	background-color: white;
+	padding: 3%;
+	margin: 5% auto;
+	width: 800px;
+}
+#pictureForm input, #pictureForm button {
+	border: solid #999 1px;
+	cursor: pointer;
+	font-size: 0.8em;
+	margin: 0 5px;
+}
+#pictureForm input {
+	display: block;
+	padding: 3px 10px 3px 3px;
+	margin: 0 auto 20px auto;
+}
+#pictureForm button {
+	display: inline-block;
+	transition: background-color 300ms;
+	padding: 0 10px;
+	height: 24px;
+}
+
+#iframeUpload {
+	position: relative;
+}
+
+#pictureForm iframe {
+	width: 800px;
+	height: 380px;
+}
+
+#reload {
+	position: absolute;
+	width: 24px;
+	height: 24px;
+	background-image: url('./images/reload.png');
+	top: 10px;
+	right: 25px;
+	cursor: pointer;
+}
+
+#nameImg {
+	width: 500px;
+	height: 1.5em;
+	font-weight: bold;
+	line-height: 1.5em;
+	overflow: hidden;
+	margin: 1em auto;
+}
